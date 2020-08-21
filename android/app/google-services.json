@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "398834040326",
+    "firebase_url": "https://wnkl-f55a7.firebaseio.com",
+    "project_id": "wnkl-f55a7",
+    "storage_bucket": "wnkl-f55a7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:398834040326:android:cc29e0f5fd2ae98cc28d87",
+        "android_client_info": {
+          "package_name": "com.example.winkl"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "398834040326-bplvuom3tnb3qmko1eg50qe4jpnonru3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.winkl",
+            "certificate_hash": "7bed756585d29d1e0a0c78f3501c54de14fb6fda"
+          }
+        },
+        {
+          "client_id": "398834040326-ktpqfvukboldbsl2cp4pqs43q2grdrka.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8gZcSriIpfITpQGFTm8GgnYbmx9b-z2Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "398834040326-ktpqfvukboldbsl2cp4pqs43q2grdrka.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
