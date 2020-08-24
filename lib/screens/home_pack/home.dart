@@ -6,6 +6,7 @@ import 'package:winkl/config/theme.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'accept_orders_pac/accept_orders.dart';
+import 'manage_orders_pac/manage_orders_home.dart';
 
 class Home extends StatefulWidget {
   final String user;
@@ -111,7 +112,7 @@ class _HomeState extends State<Home> {
                     Spacer(flex: 1,),
                     _buttonCard("Accept Orders", "accept_orders"),
                     Spacer(flex: 2,),
-                    _buttonCard("Manage orders", ""),
+                    _buttonCard("Manage orders", "manage_orders"),
                     Spacer(flex: 1,),
                   ],
                 ),
@@ -141,6 +142,11 @@ class _HomeState extends State<Home> {
         if(route == "accept_orders") {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
             return AcceptOrders();
+          }));
+        }
+        else if(route == "manage_orders") {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return ManageOrdersHome();
           }));
         }
       },

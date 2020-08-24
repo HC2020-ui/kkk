@@ -184,7 +184,7 @@ class _AddBrandsState extends State<AddBrands> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => BottomNav()),
+                        MaterialPageRoute(builder: (context) => BottomNav(Currentindex: 0,)),
                       );
                     },
                   ),

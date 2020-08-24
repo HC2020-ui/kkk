@@ -15,6 +15,26 @@ class _AcceptOrdersState extends State<AcceptOrders> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
+        title:      Container(
+          padding: EdgeInsets.only(top: 7.0, bottom: 7.0, left: 10.0, right: 10.0),
+          height: 45.0,
+          width: 345.0,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Color.fromRGBO(255, 117, 117, 1),
+          ),
+          child: Row(
+            children: <Widget>[
+              Text("LOGO", style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),),
+              Spacer(flex: 2,),
+              Align(
+                  alignment: Alignment.center,
+                  child: Text("Store Name", style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),)),
+              Spacer(flex: 3,),
+            ],
+          ),
+        ),
+        centerTitle: true,
         backgroundColor: Colors.white,
         leading: InkWell(
           onTap: () {
@@ -33,26 +53,6 @@ class _AcceptOrdersState extends State<AcceptOrders> {
                 scrollDirection: Axis.vertical,
                 child: Column(
                   children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.only(top: 7.0, bottom: 7.0, left: 10.0, right: 10.0),
-                      height: 45.0,
-                      width: 345.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Color.fromRGBO(255, 117, 117, 1),
-                      ),
-                      child: Row(
-                        children: <Widget>[
-                          Text("LOGO", style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),),
-                          Spacer(flex: 2,),
-                          Align(
-                              alignment: Alignment.center,
-                              child: Text("Store Name", style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),)),
-                          Spacer(flex: 3,),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 20.0,),
                     ListView.separated(
                       separatorBuilder: (context, index) => Padding(
                         padding: EdgeInsets.only(left: 8.0, right: 8.0, top: 10.0),
@@ -61,7 +61,7 @@ class _AcceptOrdersState extends State<AcceptOrders> {
                           color: Color.fromRGBO(3, 90, 166, 1),
                         ),
                       ),
-                      physics: ClampingScrollPhysics(),
+                      physics: ScrollPhysics(),
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
                       itemCount: 30,

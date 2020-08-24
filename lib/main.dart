@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:winkl/config/theme.dart';
+import 'package:winkl/screens/home_pack/accept_orders_pac/accept.dart';
+import 'package:winkl/screens/home_pack/accept_orders_pac/accept_partial.dart';
 import 'package:winkl/screens/home_pack/home.dart';
 import 'package:winkl/screens/otp_screens/verify_otp.dart';
 import 'package:winkl/screens/store/add_brands.dart';
@@ -44,6 +46,8 @@ class MyApp extends StatelessWidget {
         '/store_form': (context) => StoreForm(),
         '/add_brands': (context) => AddBrands(),
         '/verify_otp': (context) => VerifyOtp(),
+        '/accept_partial': (context) => AcceptPartial(),
+        '/accept_screen': (context) => AcceptScreen(),
       },
       home: SplashScreen(),
     );
