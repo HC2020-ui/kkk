@@ -1,135 +1,258 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_switch_button/custom_switch_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:toast/toast.dart';
 import 'package:winkl/config/fontstyle.dart';
+import 'package:winkl/config/routes.dart';
 import 'package:winkl/config/theme.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:winkl/screens/home_pack/manage_employees/add_employees.dart';
+import 'package:winkl/screens/home_pack/manage_employees/employee_list.dart';
+import 'package:winkl/screens/home_pack/membership.dart';
+import 'package:winkl/screens/home_pack/profile_page.dart';
+import 'package:winkl/screens/intro/intro.dart';
+import 'file:///C:/Users/LENOVO/Desktop/StackNation_%20Internship/winkl/lib/screens/home_pack/manage_inventory/productsList.dart';
 import 'accept_orders_pac/accept_orders.dart';
 import 'manage_orders_pac/manage_orders_home.dart';
 
 class Home extends StatefulWidget {
-  final String user;
-  Home({this.user});
+  final String id;
+  Home({this.id});
   @override
   _HomeState createState() => _HomeState();
 }
 
 bool _isShutterOpen = true;
 bool _isDelivery = true;
-String _time1 = "";
-String _time2 = "";
+bool _isPickedup=true;
+String _time1 = "09 : 00 : 00";
+String _time2 = "21 : 00 : 00";
+var now=DateTime.now();
+int currentTime=now.hour;
 
 class _HomeState extends State<Home> {
+
+  FirebaseAuth _auth=FirebaseAuth.instance;
+  final firestoreInstance=FirebaseFirestore.instance;
+
+  String name;
+  String email;
+  String phone_number;
+  String location;
+  String id;
+  String membership;
+  String vendor_type;
+  String store_name;
+  String image_url;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print(currentTime);
+    getuid().whenComplete(() => getUserdetails());
+//    getTiming();
+    setTiming();
+  }
+
+  Future getuid() async{
+   var firebaseuser=await FirebaseAuth.instance.currentUser;
+   setState(() {
+     id=firebaseuser.uid;
+   });
+  }
+
+  getUserdetails() async {
+    FirebaseFirestore.instance.collection('stores').doc(id).get().then((DocumentSnapshot data) {
+      setState(() {
+        store_name= data.get('establishment_name').toString();
+        name=data.get('proprietor_name').toString()??"No value";
+        email=data.get('email').toString()??"No value";
+        membership=data.get('pro_membership').toString()??"No value";
+        phone_number=data.get('phone').toString()??"No value";
+        location=data.get('area').toString()??"No value";
+        vendor_type=data.get('store_type').toString()??"No value";
+        image_url= data.get('imageUrl').toString()??"No value";
+      });
+    });
+  }
+
+
+  setTiming(){
+    if(currentTime>=int.parse(_time1.substring(0,2)) && currentTime<int.parse(_time2.substring(0,2))){
+      setState(() {
+        _isShutterOpen=true;
+        _isDelivery=false;
+      });
+    }else{
+      setState(() {
+        _isShutterOpen=false;
+        _isDelivery=true;
+      });
+    }
+  }
+
+  // getTiming() async{
+  //   var firebaseUser=await _auth.currentUser();
+  //   firestoreInstance.collection("stores").document(firebaseUser.uid).get()
+  //       .then((DocumentSnapshot) => {
+  //     _time2=DocumentSnapshot.data['closingTime'].toString(),
+  //     _time1=DocumentSnapshot.data['openingTime'].toString()
+  //   });
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0.0,
+        title: Container(
+          padding: EdgeInsets.only(top: 7.0, bottom: 7.0, left: 10.0, right: 10.0),
+          height: 45.0,
+          width: 345.0,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Color.fromRGBO(255, 117, 117, 1),
+          ),
+          child: Row(
+            children: <Widget>[
+              Text("LOGO", style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),),
+              Spacer(flex: 2,),
+              Align(
+                  alignment: Alignment.center,
+                  child: store_name!=null?Text(store_name, style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                  )
+              :Text("Store Name", style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold)
+                  )
+              ),
+              Spacer(flex: 3,),
+            ],
+          ),
+        ),
+        actions: [
+          IconButton(icon: Icon(Icons.person), onPressed: (){
+           Navigator.push(context, MaterialPageRoute(builder: (context)=>MembershipPage(name: name,email: email,phone: phone_number,vendor_type: vendor_type,location: location,storename: store_name,membership: membership,)));
+          },
+          color: Colors.black
+          ),
+        ],
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        leading: InkWell(
+          onTap: () {
+            SystemNavigator.pop();
+          },
+          child: Icon(Icons.arrow_back, size: 24.0, color: Colors.black),
+        ),
+      ),
         body: SafeArea(
-          child: Container(
-            padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 12.0, right: 12.0),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.only(top: 7.0, bottom: 7.0, left: 10.0, right: 10.0),
-                  height: 45.0,
-                  width: 345.0,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Color.fromRGBO(255, 117, 117, 1),
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Text("LOGO", style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),),
-                      Spacer(flex: 2,),
-                      Align(
-                        alignment: Alignment.center,
-                          child: Text("Store Name", style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),)),
-                      Spacer(flex: 3,),
-                    ],
-                  ),
-                ),
-                Spacer(flex: 20,),
-                Container(
-                  height: 100.0.h,
-                  child: Row(
-                    children: <Widget>[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Spacer(flex: 1,),
-                          Row(
-                            children: <Widget>[
-                              Text("Close", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),),
-                              SizedBox(width: 7.0,),
-                              InkWell(
+          child: SingleChildScrollView(
+            child: Container(
+              height: MediaQuery.of(context).size.height-80,
+              padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 12.0, right: 12.0),
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    height: 150.0.h,
+                    child: Row(
+                      children: <Widget>[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Spacer(flex: 1,),
+                            Row(
+                              children: <Widget>[
+                                Text("Close", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),),
+                                SizedBox(width: 7.0,),
+                                InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        _isShutterOpen=!_isShutterOpen;
+                                      });
+                                    },
+                                    child: _switch_button(_isShutterOpen)),
+                                SizedBox(width: 7.0),
+                                Text("Open", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
+                              ],
+                            ),
+                            Spacer(flex: 5,),
+                            Row(
+                              children: <Widget>[
+                                Text("Delivery", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),),
+                                SizedBox(width: 7.0),
+                                InkWell(
                                   onTap: () {
                                     setState(() {
-                                      _isShutterOpen = !_isShutterOpen;
+                                      _isDelivery=!_isDelivery;
                                     });
                                   },
-                                  child: _switch_button(_isShutterOpen)),
-                              SizedBox(width: 7.0,),
-                              Text("Open", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green),),
-                            ],
-                          ),
-                          Spacer(flex: 5,),
-                          Row(
-                            children: <Widget>[
-                              Text("Delivery", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),),
-                              SizedBox(width: 7.0,),
-                              InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _isDelivery = !_isDelivery;
-                                  });
-                                },
-                                  child: _switch_button(_isDelivery)),
-                            ],
-                          ),
-                          Spacer(flex: 2,),
-                        ],
-                      ),
-                      Spacer(),
-                      InkWell(
-                        onTap: () {
-                          setTimeDialog();
-                        },
-                        child: Column(
-                          children: <Widget>[
-                            Icon(Icons.access_time, size: 70.0, color: AppColors.orange,),
-                            Spacer(flex: 1,),
-                            Text("Set Time", style: Font_Style().montserrat_Bold(Colors.black, 16),),
-                            Spacer(flex: 2,),
+                                    child: _switch_button(_isDelivery)),
+                              ],
+                            ),
+                            Spacer(flex: 5,),
+                            Row(
+                              children: <Widget>[
+                                Text("Pick Up", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),),
+                                SizedBox(width: 7.0),
+                                InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        _isPickedup=!_isPickedup;
+                                      });
+                                    },
+                                    child: _switch_button(_isPickedup)),
+                              ],
+                            ),
+                            SizedBox(height: 20,),
                           ],
                         ),
-                      ),
+                        Spacer(),
+                        InkWell(
+                          onTap: () {
+                            setTimeDialog();
+                          },
+                          child: Column(
+                            children: <Widget>[
+                              Icon(Icons.access_time, size: 70.0, color: AppColors.orange,),
+                              Text("Set Time",textAlign: TextAlign.center, style: Font_Style().montserrat_Bold(Colors.black, 16),),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Spacer(flex: 20,),
+                  Row(
+                    children: <Widget>[
+                      Spacer(flex: 1,),
+                      _buttonCard("Accept Orders", "accept_orders"),
+                      Spacer(flex: 2,),
+                      _buttonCard("Manage orders", "manage_orders"),
+                      Spacer(flex: 1,),
                     ],
                   ),
-                ),
-                Spacer(flex: 25,),
-                Row(
-                  children: <Widget>[
-                    Spacer(flex: 1,),
-                    _buttonCard("Accept Orders", "accept_orders"),
-                    Spacer(flex: 2,),
-                    _buttonCard("Manage orders", "manage_orders"),
-                    Spacer(flex: 1,),
-                  ],
-                ),
-                Spacer(flex: 20,),
-                Row(
-                  children: <Widget>[
-                    Spacer(flex: 1,),
-                    _buttonCard("Manage Inventory", ""),
-                    Spacer(flex: 2,),
-                    _buttonCard("Manage Employees", ""),
-                    Spacer(flex: 1,),
-                  ],
-                ),
-                Spacer(flex: 50,),
-                _buttonWidget(context),
-                Spacer(flex: 20,),
-              ],
+                  Spacer(flex: 20,),
+                  Row(
+                    children: <Widget>[
+                      Spacer(flex: 1,),
+                      _buttonCard("Manage Inventory", "manage_inventory"),
+                      Spacer(flex: 2,),
+                      _buttonCard("Manage Employees", "manage_employees"),
+                      Spacer(flex: 1,),
+                    ],
+                  ),
+                  Spacer(flex: 50,),
+                  _buttonWidget(context),
+                  Spacer(flex: 20,),
+                ],
+              ),
             ),
           ),
         ),
@@ -149,6 +272,12 @@ class _HomeState extends State<Home> {
             return ManageOrdersHome();
           }));
         }
+        else if(route=="manage_inventory"){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductList(id:widget.id)));
+        }else if(route== "manage_employees"){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>EmployeeList()));
+          // _showdialogbox();
+        }
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 2),
@@ -165,7 +294,7 @@ class _HomeState extends State<Home> {
                   0.0, // Move to right 10  horizontally
                   3.0, // Move to bottom 10 Vertically
                 ),
-              )
+              ),
             ],
             color: Colors.white,
             borderRadius: BorderRadius.circular(10)
@@ -201,7 +330,8 @@ class _HomeState extends State<Home> {
     return Container(
       child: InkWell(
         onTap: (){
-
+          _auth.signOut();
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>IntroScreen()));
         },
         child: Container(
           width: 345.0,
@@ -306,6 +436,7 @@ class _HomeState extends State<Home> {
                 InkWell(
                   onTap: () {
                     if(_time1 != "" || _time2 != "")
+                      addTime();
                       Navigator.of(context).pop();
                   },
                   child: Container(
@@ -324,5 +455,16 @@ class _HomeState extends State<Home> {
         )
     )
     );
+  }
+
+
+  addTime() async {
+    var firebaseUser= await _auth.currentUser;
+    firestoreInstance.collection("stores").doc(firebaseUser.uid).update({
+      "openingTime":_time1,
+      "closingTime":_time2,
+    }).then((value) {
+      print("success");
+    });
   }
 }

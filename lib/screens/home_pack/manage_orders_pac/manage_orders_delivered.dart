@@ -35,7 +35,7 @@ class _ManageOrdersDeliveredState extends State<ManageOrdersDelivered> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text("Order No. :", style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),),
+                Text("Order No. }:", style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),),
                 Spacer(),
                 Text("Customer Name :", style: TextStyle(color: Colors.red, fontSize: 14.0)),
                 Spacer(),

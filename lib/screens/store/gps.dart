@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:search_map_place/search_map_place.dart';
 import 'dart:async';
-import 'package:geolocator/geolocator.dart';
 import 'package:winkl/config/theme.dart';
 import 'package:winkl/loading.dart';
-import 'package:flutter/material.dart';
-import 'package:search_map_place/search_map_place.dart';
-import 'package:winkl/screens/store/store_form.dart';
 
 class Gps extends StatefulWidget {
   @override
@@ -21,6 +19,9 @@ class _GpsState extends State<Gps> {
   double longitude;
   String location ;
   String pin;
+  String area;
+  String locality;
+  String sublocality;
   LatLng pinPosition;
   BitmapDescriptor pinLocationIcon;
 
@@ -33,27 +34,34 @@ class _GpsState extends State<Gps> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getCurrentPosition();
+    getcurrentposition();
   }
 
-  getCurrentPosition() async {
+  getcurrentposition() async {
     pinLocationIcon = await BitmapDescriptor.fromAssetImage(
         ImageConfiguration(devicePixelRatio: 2.5), 'images/destination.png');
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    Position position = await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     latitude = position.latitude;
     longitude = position.longitude;
 
-    List<Placemark> placemark = await Geolocator()
-        .placemarkFromCoordinates(position.latitude, position.longitude);
+    final placemark = await placemarkFromCoordinates(latitude, longitude);
 
     setState(() {
       pinPosition = LatLng(latitude, longitude);
       _isDone = true;
       location = placemark[0].locality.toUpperCase();
       pin = placemark[0].postalCode.toString();
+      area = placemark[0].administrativeArea.toString();
+      locality = placemark[0].locality.toString();
+      sublocality= placemark[0].subLocality.toString();
 
       print(location);
+//      print(name);
+      print(locality);
+      print(area);
+      print(sublocality);
+//      print(placemark[0].thoroughfare);
+      print(placemark[0].subThoroughfare);
 //      placemark[0].a
     });
   }
@@ -69,7 +77,7 @@ class _GpsState extends State<Gps> {
                       mapType: MapType.normal,
                       initialCameraPosition: CameraPosition(
                         target: LatLng(latitude, longitude),
-                        zoom: 12,
+                        zoom: 15,
                       ),
                       markers: _markers,
                       onMapCreated: onMapCreated,
@@ -79,10 +87,11 @@ class _GpsState extends State<Gps> {
 //             top: MediaQuery.of(context).size.height-650,
 //              left: 20.0,
 //              child: SearchMapPlaceWidget(
-//                apiKey: "AIzaSyCy6I1SleZ42NlSTDVDoKx1S6r4_vEeMNw",
+//                apiKey1: "AIzaSyCy6I1SleZ42NlSTDVDoKx1S6r4_vEeMNw",
+                  // apikey2 - AIzaSyDgMCG9TP7ljV03GCqImXby3QBtq5MyoME,
 //                // The language of the autocompletion
 //                language: 'en',
-//                // The position used to give better recomendations. In this case we are using the user position
+//                // The position used to give better recommendations. In this case we are using the user position
 //                location: LatLng(latitude,longitude),
 //                radius: 30000,
 //                onSelected: (Place place)async{
@@ -128,7 +137,7 @@ class _GpsState extends State<Gps> {
             GestureDetector(
               child: Text('Yes'),
               onTap: () {
-                Navigator.pop(context, location+', $pin' );
+                Navigator.pop(context, location+', $pin'+', $area'+', $locality' +', $sublocality');
               },
             ),
             SizedBox(

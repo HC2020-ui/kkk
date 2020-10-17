@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:winkl/screens/startup/Start.dart';
+import 'package:winkl/screens/startup/Start2.dart';
 
 class IntroScreen extends StatefulWidget {
   @override
@@ -13,7 +14,7 @@ class _IntroScreenState extends State<IntroScreen> {
 
 
     void _onIntroEnd(context) {
-      Navigator.of(context).push(MaterialPageRoute(builder: (context)=> StartupScreen()));
+      Navigator.of(context).push(MaterialPageRoute(builder: (context)=> StartScreen()));
     }
 
     Widget _buildImage(String assetName) {
@@ -58,9 +59,11 @@ class _IntroScreenState extends State<IntroScreen> {
         showSkipButton: true,
         skipFlex: 0,
         nextFlex: 0,
-        skip: const Text('Skip'),
+        skip: const Text('Skip >>', style: TextStyle(
+          color: Colors.lightBlue, fontWeight: FontWeight.w500
+        ),),
         next:  Icon(Icons.arrow_forward_ios),
-        done: const Text('Done', style: TextStyle(fontWeight: FontWeight.w600)),
+        done: const Text('Done', style: TextStyle(fontWeight: FontWeight.w600,color: Colors.lightBlue)),
         dotsDecorator: const DotsDecorator(
           size: Size(10.0, 10.0),
           color: Color(0xFFBDBDBD),

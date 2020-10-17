@@ -1,97 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:toast/toast.dart';
 import 'dart:async';
 import 'package:winkl/config/theme.dart';
-import 'package:winkl/screens/store/store_form.dart';
-import 'package:flutter/gestures.dart';
+import 'package:winkl/screens/home_pack/home.dart';
 import 'package:pinput/pin_put/pin_put.dart';
+import 'package:winkl/screens/store/wrap.dart';
+import 'package:winkl/services_screens/services_main.dart';
 
 class Login extends StatelessWidget {
   final _phoneController = TextEditingController();
   final _codeController = TextEditingController();
-
-
-//  Future<bool> loginUser(String phone, BuildContext context) async {
-//    FirebaseAuth _auth = FirebaseAuth.instance;
-//
-//    _auth.verifyPhoneNumber(
-//        phoneNumber: phone,
-//        timeout: Duration(seconds: 60),
-//        verificationCompleted: (AuthCredential credential) async {
-//          Navigator.of(context).pop();
-//
-//          AuthResult result = await _auth.signInWithCredential(credential);
-//
-//          FirebaseUser user = result.user;
-//
-//          if (user != null) {
-////            Navigator.pushReplacement(
-////                context,
-////                MaterialPageRoute(
-////                    builder: (context) => Store(
-//////                          user: user.uid,
-////                        )));
-//            Navigator.of(context)
-//                .push(MaterialPageRoute(builder: (context) => Home()));
-//          } else {
-//            print("Error");
-//          }
-//
-//          //This callback would gets called when verification is done auto maticlly
-//        },
-//        verificationFailed: (AuthException exception) {
-//          print(exception.message);
-//        },
-//        codeSent: (String verificationId, [int forceResendingToken]) {
-//          showDialog(
-//              context: context,
-//              barrierDismissible: false,
-//              builder: (context) {
-//                return AlertDialog(
-//                  title: Text("Give the code?"),
-//                  content: Column(
-//                    mainAxisSize: MainAxisSize.min,
-//                    children: <Widget>[
-//                      TextField(
-//                        controller: _pinPutController,
-//                      ),
-//                    ],
-//                  ),
-//                  actions: <Widget>[
-//                    FlatButton(
-//                      child: Text("Confirm"),
-//                      textColor: Colors.white,
-//                      color: AppColors.orange,
-//                      onPressed: () async {
-//                        final code = _pinPutController.text.trim();
-//                        AuthCredential credential =
-//                        PhoneAuthProvider.getCredential(
-//                            verificationId: verificationId, smsCode: code);
-//
-//                        AuthResult result =
-//                        await _auth.signInWithCredential(credential);
-//
-//                        FirebaseUser user = result.user;
-//
-//                        if (user != null) {
-//                          Navigator.push(
-//                              context,
-//                              MaterialPageRoute(
-//                                  builder: (context) => Home(
-//                                    user: user.uid,
-//                                  )));
-//                        } else {
-//                          print("Error");
-//                        }
-//                      },
-//                    )
-//                  ],
-//                );
-//              });
-//        },
-//        codeAutoRetrievalTimeout: null);
-//  }
 
 
   @override
@@ -108,12 +30,12 @@ class Login extends StatelessWidget {
               Image(
                 image: AssetImage('images/2.jpg'),
                 fit: BoxFit.cover,
-
               ),
               SizedBox(
                 height: 16,
               ),
               TextFormField(
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -162,7 +84,6 @@ class Login extends StatelessWidget {
 
 class Otp extends StatefulWidget {
   final String phoneNumber;
-
   Otp({this.phoneNumber});
 
   @override
@@ -170,11 +91,16 @@ class Otp extends StatefulWidget {
 }
 
 class _OtpState extends State<Otp> {
+  UserCredential result;
   final TextEditingController _pinPutController = TextEditingController();
   final FocusNode _pinPutFocusNode = FocusNode();
   FirebaseAuth _auth = FirebaseAuth.instance;
-  AuthCredential _phoneAuthCredential;
-  String _verficationId;
+  final otpController = TextEditingController();
+  AuthCredential _credential;
+  var storeType;
+  String _verificationId;
+  final firestoreUser = FirebaseFirestore.instance;
+  String smsCode;
 
 
   BoxDecoration get _pinPutDecoration {
@@ -188,61 +114,9 @@ class _OtpState extends State<Otp> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    authentication();
+    print(widget.phoneNumber);
+    Firebase.initializeApp().whenComplete(() => signInwithPhone("+91${widget.phoneNumber}"));
   }
-
-  Future<bool> authentication()async {
-    print("+91${widget.phoneNumber}");
-    _auth.verifyPhoneNumber(
-        phoneNumber: "+91${widget.phoneNumber}",
-        timeout: Duration(seconds: 60),
-        verificationCompleted: verificationCompleted,
-        verificationFailed: verificationFailed,
-        codeSent: codeSent,
-        codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
-
-
-  }
-
-
-  void verificationCompleted(AuthCredential phoneAuthCredential) async{
-    print('verificationCompleted');
-    this._phoneAuthCredential = phoneAuthCredential;
-    AuthResult result = await _auth.signInWithCredential(this._phoneAuthCredential);
-
-    FirebaseUser user = result.user;
-    if (user != null) {
-//            Navigator.pushReplacement(
-//                context,
-//                MaterialPageRoute(
-//                    builder: (context) => Store(
-////                          user: user.uid,
-//                        )));
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => StoreForm()));
-    } else {
-      print("Error");
-    }
-    print(phoneAuthCredential);
-  }
-  void verificationFailed(AuthException error) {
-    print(error);
-  }
-
-  void codeSent(String verificationId, [int code]) {
-    this._verficationId = verificationId;
-
-  }
-
-  void codeAutoRetrievalTimeout(String verificationId) {
-    this._verficationId = verificationId;
-    print('codeAutoRetrievalTimeout');
-  }
-
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -291,112 +165,153 @@ class _OtpState extends State<Otp> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(
                       Radius.circular(AppSizes.widgetBorderRadius))),
-              onPressed: () async{
-                final code = _pinPutController.text.trim();
-                AuthCredential credential =
-                PhoneAuthProvider.getCredential(
-                    verificationId: _verficationId, smsCode: code);
-                AuthResult result =
-                await _auth.signInWithCredential(credential);
+              onPressed: () async {
+                smsCode = _pinPutController.text.trim();
+                                _credential = PhoneAuthProvider.credential(
+                                    verificationId: _verificationId, smsCode: smsCode);
+                                await _auth.signInWithCredential(_credential).then((
+                                    UserCredential result) {
+                                  if (result.user != null) {
+                                    print(result.user.uid);
+                                    Navigator.pop(context);
+                                    Navigator.pushReplacement(
+                                        context, MaterialPageRoute(
+                                        builder: (context) =>
+                                            Wrapper2(id: result.user.uid,phone: widget.phoneNumber,)
+                                    )).then((value) {
+                                      Toast.show("Login Successfully", context,
+                                          duration: Toast.LENGTH_SHORT,
+                                          gravity: Toast.BOTTOM);
+                                    });
+                                  } else {
+                                    print('error');
+                                  }
+                                }).catchError((e) {
+                                  print(e);
+                                });
+                              },
+                            )
+//                    FirebaseAuth auth = FirebaseAuth.instance;
 
-                FirebaseUser user = result.user;
-                if (user != null) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => StoreForm(
-                          )));
-                } else {
-                  print("Error");
-                }
-
-              },
+//                              String smsCode = _pinPutController.text.trim();
+//
+//                              _credential = PhoneAuthProvider.getCredential(
+//                                  verificationId: _verficationId, smsCode: smsCode);
+//                              await auth.signInWithCredential(_credential).then((
+//                                  AuthResult result) async {
+//
+//                                //getting data from database
+//
+////                                storeType=snapshot.data['store_type'].toString();
+////                                storeType= snapshot.data((DocumentSnapshot document){
+////                                  return document[uid].data['store_type'].toString();
+////                                });
+//                                print(storeType);
+//                                print("fuck");
+//
+//                              }).catchError((e) {
+//                                print(e);
+//                              });
             ),
-          )
         ],
       ),
     );
   }
 
-
-//  Future<bool> loginUser(String phone, BuildContext context) async {
-//    FirebaseAuth _auth = FirebaseAuth.instance;
-//
-//    _auth.verifyPhoneNumber(
-//        phoneNumber: phone,
-//        timeout: Duration(seconds: 60),
-//        verificationCompleted: (AuthCredential credential) async {
-//          Navigator.of(context).pop();
-//
-//          AuthResult result = await _auth.signInWithCredential(credential);
-//
-//          FirebaseUser user = result.user;
-//
-//          if (user != null) {
-////            Navigator.pushReplacement(
-////                context,
-////                MaterialPageRoute(
-////                    builder: (context) => Store(
-//////                          user: user.uid,
-////                        )));
-//            Navigator.of(context)
-//                .push(MaterialPageRoute(builder: (context) => Home()));
-//          } else {
-//            print("Error");
-//          }
-//
-//          //This callback would gets called when verification is done auto maticlly
-//        },
-//        verificationFailed: (AuthException exception) {
-//          print(exception.message);
-//        },
-//        codeSent: (String verificationId, [int forceResendingToken]) {
-//          showDialog(
-//              context: context,
-//              barrierDismissible: false,
-//              builder: (context) {
-//                return AlertDialog(
-//                  title: Text("Give the code?"),
-//                  content: Column(
-//                    mainAxisSize: MainAxisSize.min,
-//                    children: <Widget>[
-//                      TextField(
-//                        controller: _pinPutController,
-//                      ),
-//                    ],
-//                  ),
-//                  actions: <Widget>[
-//                    FlatButton(
-//                      child: Text("Confirm"),
-//                      textColor: Colors.white,
-//                      color: AppColors.orange,
-//                      onPressed: () async {
-//                        final code = _pinPutController.text.trim();
-//                        AuthCredential credential =
-//                        PhoneAuthProvider.getCredential(
-//                            verificationId: verificationId, smsCode: code);
-//
-//                        AuthResult result =
-//                        await _auth.signInWithCredential(credential);
-//
-//                        FirebaseUser user = result.user;
-//
-//                        if (user != null) {
-//                          Navigator.push(
-//                              context,
-//                              MaterialPageRoute(
-//                                  builder: (context) => Home(
-//                                    user: user.uid,
-//                                  )));
-//                        } else {
-//                          print("Error");
-//                        }
-//                      },
-//                    )
-//                  ],
-//                );
-//              });
-//        },
-//        codeAutoRetrievalTimeout: null);
+//  getstoreType() async {
+//    var firebaseUser= await _auth.currentUser();
+//    await firestoreUser.collection("stores").document(firebaseUser.uid).get()
+//        .then((DocumentSnapshot) => {
+//      storeType=DocumentSnapshot.data['store_type'].toString(),
+//    });
+//    print(storeType);
 //  }
+  signInwithPhone(phone) async {
+    _auth.verifyPhoneNumber(
+      phoneNumber: phone,
+      timeout: Duration(seconds: 60),
+      verificationCompleted: (AuthCredential authCredential) async{
+        await _auth.signInWithCredential(authCredential).then((
+            UserCredential result) {
+          setState(() {
+            _credential=authCredential;
+          });
+          Navigator.pop(context);
+          Navigator.pushReplacement(context, MaterialPageRoute(
+              builder: (context) => Wrapper2(id: result.user.uid,phone: phone,)
+          ));
+        }).catchError((e) {
+          print(e);
+        });
+      },
+      verificationFailed: (FirebaseAuthException authException) {
+        print(authException.message);
+      },
+      codeSent: (String verificationId, [int forceResendingToken]) {
+        if(_credential==null) {
+          setState(() {
+            _verificationId=verificationId;
+          });
+          //show dialog to take input from the user
+          // showDialog(
+          //     context: context,
+          //     barrierDismissible: false,
+          //     builder: (context) =>
+          //         AlertDialog(
+          //           title: Text("Enter SMS Code"),
+          //           content: Column(
+          //             mainAxisSize: MainAxisSize.min,
+          //             children: <Widget>[
+          //               TextField(
+          //                 keyboardType: TextInputType.number,
+          //                 controller: otpController,
+          //               ),
+          //             ],
+          //           ),
+          //           actions: <Widget>[
+          //             FlatButton(
+          //               child: Text("Done"),
+          //               textColor: Colors.white,
+          //               color: Colors.redAccent,
+          //               onPressed: () async {
+          //                 FirebaseAuth auth = FirebaseAuth.instance;
+          //
+          //                 smsCode = otpController.text.trim();
+          //
+          //                 _credential = PhoneAuthProvider.credential(
+          //                     verificationId: verificationId, smsCode: smsCode);
+          //                 await auth.signInWithCredential(_credential).then((
+          //                     UserCredential result) {
+          //                   if (result.user != null) {
+          //                     print(result.user.uid);
+          //                     Navigator.pop(context);
+          //                     Navigator.pushReplacement(
+          //                         context, MaterialPageRoute(
+          //                         builder: (context) =>
+          //                             Wrapper2(id: result.user.uid,phone: phone,)
+          //                     )).then((value) {
+          //                       Toast.show("Login Successfully", context,
+          //                           duration: Toast.LENGTH_SHORT,
+          //                           gravity: Toast.BOTTOM);
+          //                     });
+          //                   } else {
+          //                     print('error');
+          //                   }
+          //                 }).catchError((e) {
+          //                   print(e);
+          //                 });
+          //               },
+          //             )
+          //           ],
+          //         )
+          // );
+        }
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        verificationId = verificationId;
+        print(verificationId);
+        print("Timeout");
+      },
+    );
+  }
 }

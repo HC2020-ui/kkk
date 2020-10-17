@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:winkl/config/fontstyle.dart';
 import 'package:winkl/screens/home_pack/home.dart';
 import 'package:winkl/screens/settings_pack/settings_home.dart';
 
 class BottomNav extends StatefulWidget {
   var Currentindex;
-  BottomNav({this.Currentindex});
+  var location;
+  BottomNav({this.Currentindex,this.location});
 
   @override
   _BottomNavState createState() => _BottomNavState();
@@ -39,7 +40,7 @@ class _BottomNavState extends State<BottomNav> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: (){
-        return Future.value(false);
+        SystemNavigator.pop();
       },
       child: Scaffold(
         appBar: AppBar(
@@ -60,8 +61,8 @@ class _BottomNavState extends State<BottomNav> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text("Noida,201301", style: Font_Style().montserrat_Bold(null, 14),),
-                  Text("Noida,201301", style: Font_Style().montserrat_Regular(null, 10),),
+                  Text(widget.location!=null?widget.location:"Location not found", style: Font_Style().montserrat_Bold(null, 14),),
+                  Text(widget.location!=null?widget.location:"Location not found", style: Font_Style().montserrat_Regular(null, 10),),
                 ],
               ),
             ],

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:winkl/screens/home_pack/home.dart';
 import '../../../appBar.dart';
 
 double iconSize = 20;
 
 class ThirdScreen extends StatelessWidget {
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,9 +82,9 @@ class ThirdScreen extends StatelessWidget {
               Divider(
                 height: 4,
               ),
-              buttons('Delivered ', Colors.indigoAccent),
+              buttons('Delivered ', Colors.indigoAccent,context),
 //              buttons('Picked by Customer', Colors.cyan),
-              buttons('Cancel Order', Colors.red),
+              buttons('Cancel Order', Colors.red,context),
             ],
           ),
         ),
@@ -99,7 +102,7 @@ class ThirdScreen extends StatelessWidget {
     );
   }
 
-  Center buttons(String text, Color color) {
+  Center buttons(String text, Color color,BuildContext context) {
     return Center(
       heightFactor: 1.5,
       child: SizedBox(
@@ -113,10 +116,33 @@ class ThirdScreen extends StatelessWidget {
             style: TextStyle(color: Colors.white),
           ),
           onPressed: () {
-            // Navigator.pushNamed(context, '/second');
+            showDialogBox(text, context);
+             Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>Home()), (route) => false);
           },
         ),
       ),
     );
   }
+
+  showDialogBox(String msg,BuildContext context){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Notification"),
+          content: new Text(msg, style: TextStyle(fontStyle: FontStyle.italic),),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("Continue"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 }

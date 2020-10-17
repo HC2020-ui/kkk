@@ -1,4 +1,8 @@
+import 'dart:math';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:keyboard_avoider/keyboard_avoider.dart';
 import 'package:winkl/config/theme.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,8 +16,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:uuid/uuid.dart';
+import 'package:winkl/services/auth.dart';
 
 class StoreForm extends StatefulWidget {
+  String id;
+  String Phone;
+  StoreForm({this.id,this.Phone});
+
   @override
   _StoreFormState createState() => _StoreFormState();
 }
@@ -25,6 +34,7 @@ class _StoreFormState extends State<StoreForm> {
   var uuid = Uuid();
 
 
+
   final _picker = ImagePicker();
   final _formkey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -34,18 +44,20 @@ class _StoreFormState extends State<StoreForm> {
   String _establishmanetName;
   String _proprietorName;
   String _email;
-  String _phone;
-  String _sellerCategory;
+  var _phone="";
   String _gps = 'Wait for few seconds...';
   String _serviceValue = 'Service Radius';
+  String _seType='Vendor Category';
   String _storeValue = 'Select Store Type';
-  String _uid;
+  // String _uid;
   bool _isVerified = false;
-  String _imageUrl= "images/placeholder.ong";
+  String _imageUrl= "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png";
 
   ///Firebase instances
-  FirebaseUser currentUser;
-  FirebaseStorage _storage = FirebaseStorage();
+//  FirebaseUser currentUser;
+  final FirebaseStorage _storage = FirebaseStorage();
+  final AuthService authService=AuthService();
+  var gps_controller= TextEditingController();
 
 
   List<String> mylist = [
@@ -66,17 +78,28 @@ class _StoreFormState extends State<StoreForm> {
     'Services'
   ];
 
+  List<String> serviceTypes=[
+    'Vendor Category',
+    'Grocery',
+    'Fruits and Vegetables',
+    'IceCreams',
+    'Beverages',
+  ];
+
+  TextEditingController _controller= TextEditingController();
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getCurrentUser();
+    _controller.text=widget.Phone;
+//    getCurrentUser();
   }
 
-  void getCurrentUser() async {
-    currentUser = await FirebaseAuth.instance.currentUser();
-    print(currentUser.uid);
-  }
+//  void getCurrentUser() async {
+//    currentUser = (await FirebaseAuth.instance.currentUser());
+//    print(currentUser.uid+"fuck");
+//  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,11 +116,11 @@ class _StoreFormState extends State<StoreForm> {
             child: Icon(Icons.arrow_back, size: 24.0, color: Colors.black,)),
       ),
       body: KeyboardAvoider(
-        autoScroll: true,
-        child: Container(
-          margin: EdgeInsets.only(top: 30),
-          child: SingleChildScrollView(
-            physics: NeverScrollableScrollPhysics(),
+        autoScroll: false,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Container(
+            margin: EdgeInsets.only(top: 30),
             child: Form(
               key: _formkey,
               autovalidate: _autoValidation,
@@ -133,8 +156,10 @@ class _StoreFormState extends State<StoreForm> {
                         autovalidate: _autoValidation,
                         textAlign: TextAlign.left,
                         validator: requireFieldValidator,
-                        onSaved: (value) {
-                          _establishmanetName = value;
+                        onChanged: (value) {
+                          setState(() {
+                            _establishmanetName = value;
+                          });
                         },
                         decoration: AppStyles.textFormFieldDecoration
                             .copyWith(hintText: 'Establishment Name'),
@@ -147,8 +172,10 @@ class _StoreFormState extends State<StoreForm> {
                       child: TextFormField(
                         autovalidate: _autoValidation,
                         validator: requireFieldValidator,
-                        onSaved: (value) {
-                          _proprietorName = value;
+                        onChanged: (value) {
+                          setState(() {
+                            _proprietorName = value;
+                          });
                         },
                         decoration: AppStyles.textFormFieldDecoration
                             .copyWith(hintText: 'Proprietor Name'),
@@ -166,8 +193,10 @@ class _StoreFormState extends State<StoreForm> {
               child: TextFormField(
             autovalidate: _autoValidation,
             validator: emailValidation,
-            onSaved: (email) {
-              _email = email;
+            onChanged: (email) {
+              setState(() {
+                _email = email;
+              });
             },
             decoration:
                 AppStyles.textFormFieldDecoration.copyWith(hintText: 'Email'),
@@ -177,12 +206,11 @@ class _StoreFormState extends State<StoreForm> {
           ),
           Container(
               child: TextFormField(
+                keyboardType: TextInputType.number,
                 autovalidate: _autoValidation,
+                controller: _controller,
                 validator: (val){
                   return val.isEmpty || val.length < 10 ? "Please enter a valid Phone Number" : null;
-                },
-                onSaved: (phone) {
-                  _phone = phone;
                 },
                 decoration:
                 AppStyles.textFormFieldDecoration.copyWith(hintText: 'Phone Number'),
@@ -199,6 +227,7 @@ class _StoreFormState extends State<StoreForm> {
               alignedDropdown: true,
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
+                  hint: Text('Select Service Radius'),
                   value: _serviceValue,
                   isExpanded: true,
                   underline: Container(
@@ -224,18 +253,37 @@ class _StoreFormState extends State<StoreForm> {
             height: 10,
           ),
           Container(
-              child: TextFormField(
-            autovalidate: _autoValidation,
-            validator: requireFieldValidator,
-            onSaved: (value) {
-              _sellerCategory = value;
-            },
-            decoration: AppStyles.textFormFieldDecoration
-                .copyWith(hintText: 'Seller Category'),
-          )),
-          SizedBox(
-            height: 10,
+//            width: 300,
+            decoration: BoxDecoration(
+                border: Border.all(color: AppColors.orange, width: 2),
+                borderRadius: BorderRadius.all(Radius.circular(10))),
+            child: ButtonTheme(
+              alignedDropdown: true,
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  hint: Text("Select Service Type"),
+                  value: _seType,
+                  isExpanded: true,
+                  underline: Container(
+                    height: 2,
+                    color: AppColors.orange,
+                  ),
+                  onChanged: (String newValue) {
+                    setState(() {
+                      _seType = newValue;
+                    });
+                  },
+                  items: serviceTypes.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
           ),
+          SizedBox(height: 10,),
           Container(
 //            width: 300,
             decoration: BoxDecoration(
@@ -245,6 +293,7 @@ class _StoreFormState extends State<StoreForm> {
               alignedDropdown: true,
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
+                  hint: Text('Select Store type'),
                   value: _storeValue,
                   isExpanded: true,
                   underline: Container(
@@ -271,58 +320,62 @@ class _StoreFormState extends State<StoreForm> {
             height: 10,
           ),
           Container(
+            width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
                 border: Border.all(color: AppColors.orange, width: 2),
                 borderRadius: BorderRadius.all(Radius.circular(10))),
             padding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
 //              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text('$_gps'),
+                children: [
+                  Text(_gps),
                 GestureDetector(
-                    onTap: () async {
-                      var result = await Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Gps()));
-                      setState(() {
-                        if (result != null) {
-                          _gps = result.toString();
-                        }
-                      });
-                    },
-                    child: Icon(
-                      Icons.location_on,
-                      size: 25,
-                      color: AppColors.orange,
-                    )),
-              ],
+                      onTap: () async {
+                        var result = await Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Gps()));
+                        setState(() {
+                          if (result != null) {
+                            enter_gps();
+                            _gps = result.toString();
+                          }
+                        });
+                      },
+                      child: Icon(
+                        Icons.location_on,
+                        size: 25,
+                        color: AppColors.orange,
+                      )),
+                ],
+              ),
             ),
           ),
           SizedBox(
             height: 30,
           ),
           Container(
-//            padding: EdgeInsets.symmetric(horizontal: 35),
             width: 600,
             child: MaterialButton(
               height: 55,
               color: AppColors.orange,
               child: Text(
-                'Register',
+                'Continue',
                 style:
                     AppStyles.buttonTextStyle.copyWith(color: AppColors.white),
               ),
               onPressed: () {
-                formValidation(context);
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return VerifyOtp(storeValue: _storeValue,);
-                }));
+//                formValidation(context);
+              print(widget.Phone);
+              if(_formkey.currentState.validate())
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>AddBrands(_establishmanetName, _proprietorName, _email, widget.Phone, _serviceValue,_seType, _storeValue, _gps, _imageUrl, widget.id)));
               },
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(
                       Radius.circular(AppSizes.widgetBorderRadius))),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -425,34 +478,46 @@ class _StoreFormState extends State<StoreForm> {
   Future getImage(ImageSource source) async {
     String uniqueId = uuid.v1();
     String url;
-    final pickedFile = await _picker.getImage(source: source);
-    if (pickedFile == null) {
+    FirebaseStorage storage = FirebaseStorage.instance;
+
+    File image;
+    try {
+      //Get the file from the image picker and store it
+      var img = await ImagePicker().getImage(source: source);
+
+      setState(() {
+        image=File(img.path);
+      });
+
+    } on PlatformException catch (e) {
+      //PlatformException is thrown with code : this happen when user back with don't
+      //selected image or not approve permission so stop method here
+      // check e.code to know what type is happen
       return;
     }
 
-    File tmpFile = File(pickedFile.path);
+    //Create a reference to the location you want to upload to in firebase
+    StorageReference reference =
+    storage.ref().child("profileImages/${uniqueId}");
 
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    final String path = appDocDir.path;
-    final String fileName = basename(pickedFile.path);
-    final String fileExtension = extension(pickedFile.path);
-    print(fileName);
-    tmpFile = await tmpFile.copy('$path/$fileName');
-
-
-    StorageReference reference = _storage.ref().child("profileImages/${uniqueId}");
-    StorageUploadTask uploadTask = reference.putFile(tmpFile);
+    //Upload the file to firebase
+    StorageUploadTask uploadTask = reference.putFile(image);
 
     StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
 
+    // Waits till the file is uploaded then stores the download url
     url = await taskSnapshot.ref.getDownloadURL();
 
+    print(url);
 
     setState(() {
-      _image = tmpFile;
       _imageUrl = url;
     });
 
+
+  }
+
+  enter_gps(){
 
   }
 
@@ -472,41 +537,5 @@ class _StoreFormState extends State<StoreForm> {
       return null;
     }
     return 'Please check your email';
-  }
-
-  void formValidation(BuildContext context) {
-    if (_formkey.currentState.validate()) {
-      _formkey.currentState.save();
-      Firestore.instance
-          .collection("stores")
-          .document('stores${currentUser.uid}')
-          .setData({
-          "uid": currentUser.uid,
-          "email":_email,
-          "phone": _phone,
-          "seller_category":_sellerCategory,
-          "establishment_name":_establishmanetName,
-          "proprietor_name":_proprietorName,
-          "service_radius":_serviceValue,
-          "store_type":_storeValue,
-          "area":_gps,
-          "imageUrl":_imageUrl
-          })
-          .then((value) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return AddBrands(storeValue: _storeValue,);
-        }));
-      })
-          .catchError((e) {
-            print('There is some error');
-            _scaffoldKey.currentState.showSnackBar(SnackBar(
-              content: Text('Ooops!! We have some problem, sorry'),
-            ));
-          });
-    } else {
-      setState(() {
-        _autoValidation = true;
-      });
-    }
   }
 }
