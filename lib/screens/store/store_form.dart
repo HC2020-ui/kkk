@@ -51,7 +51,7 @@ class _StoreFormState extends State<StoreForm> {
   String _storeValue = 'Select Store Type';
   // String _uid;
   bool _isVerified = false;
-  String _imageUrl= "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png";
+  String _imageUrl= "https://lh3.googleusercontent.com/proxy/nVTJRAA9cP_kupvg194edu3VIav6t8_NdT1vL94qgJITsCTTaAQRrEd1Dz3FGSjJgUr44bEYhIK4PNosX5inMeRquLglDw";
 
   ///Firebase instances
 //  FirebaseUser currentUser;
@@ -86,6 +86,14 @@ class _StoreFormState extends State<StoreForm> {
     'Beverages',
   ];
 
+  String address2="";
+  String address1="";
+  String state="";
+  String city="";
+  String country="";
+  String area="";
+  String landmark="";
+  String pin_code="";
   TextEditingController _controller= TextEditingController();
 
   @override
@@ -162,7 +170,7 @@ class _StoreFormState extends State<StoreForm> {
                           });
                         },
                         decoration: AppStyles.textFormFieldDecoration
-                            .copyWith(hintText: 'Establishment Name'),
+                            .copyWith(hintText: 'Store name'),
                       ),
                     ),
                     SizedBox(
@@ -178,7 +186,7 @@ class _StoreFormState extends State<StoreForm> {
                           });
                         },
                         decoration: AppStyles.textFormFieldDecoration
-                            .copyWith(hintText: 'Proprietor Name'),
+                            .copyWith(hintText: 'Owner Name'),
                       ),
                     ),
                   ],
@@ -199,7 +207,7 @@ class _StoreFormState extends State<StoreForm> {
               });
             },
             decoration:
-                AppStyles.textFormFieldDecoration.copyWith(hintText: 'Email'),
+                AppStyles.textFormFieldDecoration.copyWith(hintText: 'Email Address'),
           )),
           SizedBox(
             height: 10,
@@ -319,39 +327,137 @@ class _StoreFormState extends State<StoreForm> {
           SizedBox(
             height: 10,
           ),
+
+
+//           Container(
+//             width: MediaQuery.of(context).size.width,
+//             decoration: BoxDecoration(
+//                 border: Border.all(color: AppColors.orange, width: 2),
+//                 borderRadius: BorderRadius.all(Radius.circular(10))),
+//             padding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+//             child: SingleChildScrollView(
+//               scrollDirection: Axis.horizontal,
+//               child: Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+// //              crossAxisAlignment: CrossAxisAlignment.stretch,
+//                 children: [
+//                   Text(_gps),
+//                 GestureDetector(
+//                       onTap: () async {
+//                         var result = await Navigator.push(context,
+//                             MaterialPageRoute(builder: (context) => Gps()));
+//                         setState(() {
+//                           if (result != null) {
+//                             enter_gps();
+//                             _gps = result.toString();
+//                           }
+//                         });
+//                       },
+//                       child: Icon(
+//                         Icons.location_on,
+//                         size: 25,
+//                         color: AppColors.orange,
+//                       )),
+//                 ],
+//               ),
+//             ),
+//           ),
           Container(
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-                border: Border.all(color: AppColors.orange, width: 2),
-                borderRadius: BorderRadius.all(Radius.circular(10))),
-            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//              crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(_gps),
-                GestureDetector(
-                      onTap: () async {
-                        var result = await Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Gps()));
-                        setState(() {
-                          if (result != null) {
-                            enter_gps();
-                            _gps = result.toString();
-                          }
-                        });
-                      },
-                      child: Icon(
-                        Icons.location_on,
-                        size: 25,
-                        color: AppColors.orange,
-                      )),
-                ],
-              ),
-            ),
-          ),
+              child: TextFormField(
+                autovalidate: _autoValidation,
+                onChanged: (value) {
+                  setState(() {
+                    address1 = value;
+                  });
+                },
+                decoration:
+                AppStyles.textFormFieldDecoration.copyWith(hintText: 'Address line 1'),
+              )),
+          SizedBox(height: 20,),
+          Container(
+              child: TextFormField(
+                autovalidate: _autoValidation,
+                onChanged: (value) {
+                  setState(() {
+                    address2 = value;
+                  });
+                },
+                decoration:
+                AppStyles.textFormFieldDecoration.copyWith(hintText: 'Address line 2'),
+              )),
+          SizedBox(height: 10,),
+          Container(
+              child: TextFormField(
+                autovalidate: _autoValidation,
+                onChanged: (value) {
+                  setState(() {
+                    landmark = value;
+                  });
+                },
+                decoration:
+                AppStyles.textFormFieldDecoration.copyWith(hintText: 'Landmark'),
+              )),
+          SizedBox(height: 10,),
+          Container(
+              child: TextFormField(
+                autovalidate: _autoValidation,
+                onChanged: (value) {
+                  setState(() {
+                    country = value;
+                  });
+                },
+                decoration:
+                AppStyles.textFormFieldDecoration.copyWith(hintText: 'Country'),
+              )),
+          SizedBox(height: 10,),
+          Container(
+              child: TextFormField(
+                autovalidate: _autoValidation,
+                onChanged: (value) {
+                  setState(() {
+                    state = value;
+                  });
+                },
+                decoration:
+                AppStyles.textFormFieldDecoration.copyWith(hintText: 'State'),
+              )),
+          SizedBox(height: 10,),
+          Container(
+              child: TextFormField(
+                autovalidate: _autoValidation,
+                onChanged: (value) {
+                  setState(() {
+                    city = value;
+                  });
+                },
+                decoration:
+                AppStyles.textFormFieldDecoration.copyWith(hintText: 'City'),
+              )),
+          SizedBox(height: 10,),
+          Container(
+              child: TextFormField(
+                keyboardType: TextInputType.number,
+                autovalidate: _autoValidation,
+                onChanged: (value) {
+                  setState(() {
+                    pin_code = value;
+                  });
+                },
+                decoration:
+                AppStyles.textFormFieldDecoration.copyWith(hintText: 'Pin Code'),
+              )),
+          SizedBox(height: 10,),
+          Container(
+              child: TextFormField(
+                autovalidate: _autoValidation,
+                onChanged: (value) {
+                  setState(() {
+                    area = value;
+                  });
+                },
+                decoration:
+                AppStyles.textFormFieldDecoration.copyWith(hintText: 'Area'),
+              )),
           SizedBox(
             height: 30,
           ),
@@ -369,7 +475,7 @@ class _StoreFormState extends State<StoreForm> {
 //                formValidation(context);
               print(widget.Phone);
               if(_formkey.currentState.validate())
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>AddBrands(_establishmanetName, _proprietorName, _email, widget.Phone, _serviceValue,_seType, _storeValue, _gps, _imageUrl, widget.id)));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>AddBrands( establishmanetName: _establishmanetName, proprietorName: _proprietorName,serviceType: _seType,storeType: _storeValue,email: _email,phone: _controller.text,gps: _gps,serviceValue: _serviceValue,imageUrl: _imageUrl,uid: widget.id,)));
               },
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(

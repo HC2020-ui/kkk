@@ -7,12 +7,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
 import 'package:winkl/config/fontstyle.dart';
 import 'package:winkl/config/routes.dart';
 import 'package:winkl/config/theme.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:winkl/dark_theme/dart_theme_provider.dart';
 import 'package:winkl/screens/home_pack/manage_employees/add_employees.dart';
 import 'package:winkl/screens/home_pack/manage_employees/employee_list.dart';
 import 'package:winkl/screens/home_pack/membership.dart';
@@ -24,7 +26,8 @@ import 'manage_orders_pac/manage_orders_home.dart';
 
 class Home extends StatefulWidget {
   final String id;
-  Home({this.id});
+  String store_type;
+  Home({this.id, this.store_type});
   @override
   _HomeState createState() => _HomeState();
 }
@@ -38,6 +41,7 @@ var now=DateTime.now();
 int currentTime=now.hour;
 
 class _HomeState extends State<Home> {
+
 
   FirebaseAuth _auth=FirebaseAuth.instance;
   final firestoreInstance=FirebaseFirestore.instance;
@@ -57,7 +61,15 @@ class _HomeState extends State<Home> {
     // TODO: implement initState
     super.initState();
     print(currentTime);
-    getuid().whenComplete(() => getUserdetails());
+    if(widget.id==null) {
+      getuid().whenComplete(() => getUserdetails());
+    }else{
+      print(widget.id);
+      setState(() {
+        id=widget.id;
+      });
+      getUserdetails();
+    }
 //    getTiming();
     setTiming();
   }
@@ -110,6 +122,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final themeChange = Provider.of<DarkThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
@@ -137,11 +150,27 @@ class _HomeState extends State<Home> {
           ),
         ),
         actions: [
-          IconButton(icon: Icon(Icons.person), onPressed: (){
-           Navigator.push(context, MaterialPageRoute(builder: (context)=>MembershipPage(name: name,email: email,phone: phone_number,vendor_type: vendor_type,location: location,storename: store_name,membership: membership,)));
-          },
-          color: Colors.black
+          GestureDetector(
+            child: Container(
+              margin: EdgeInsets.fromLTRB(0,10,10,10),
+              child: Image.asset('images/profile.png',
+                height: 40,
+                width: 40,
+                fit: BoxFit.contain,
+              ),
+            ),
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>MembershipPage(name: name,email: email,phone: phone_number,vendor_type: vendor_type,location: location,storename: store_name,membership: membership,)));
+            },
           ),
+          IconButton(
+            icon:themeChange.darkTheme? Icon(Icons.brightness_2_sharp, color: Colors.black,):Icon(Icons.lightbulb_outline, color: Colors.black,),
+            onPressed: (){
+              setState(() {
+                themeChange.darkTheme= !themeChange.darkTheme;
+              });
+            },
+          )
         ],
         centerTitle: true,
         backgroundColor: Colors.white,
@@ -160,7 +189,7 @@ class _HomeState extends State<Home> {
               child: Column(
                 children: <Widget>[
                   Container(
-                    height: 150.0.h,
+                    height: 150.0,
                     child: Row(
                       children: <Widget>[
                         Column(
@@ -221,7 +250,7 @@ class _HomeState extends State<Home> {
                           child: Column(
                             children: <Widget>[
                               Icon(Icons.access_time, size: 70.0, color: AppColors.orange,),
-                              Text("Set Time",textAlign: TextAlign.center, style: Font_Style().montserrat_Bold(Colors.black, 16),),
+                              Text("Set Time",textAlign: TextAlign.center, style:TextStyle(color: Colors.black,fontSize: 16,fontWeight: FontWeight.w800)),
                             ],
                           ),
                         ),
@@ -234,7 +263,7 @@ class _HomeState extends State<Home> {
                       Spacer(flex: 1,),
                       _buttonCard("Accept Orders", "accept_orders"),
                       Spacer(flex: 2,),
-                      _buttonCard("Manage orders", "manage_orders"),
+                      _buttonCard("Manage Orders", "manage_orders"),
                       Spacer(flex: 1,),
                     ],
                   ),
@@ -244,7 +273,7 @@ class _HomeState extends State<Home> {
                       Spacer(flex: 1,),
                       _buttonCard("Manage Inventory", "manage_inventory"),
                       Spacer(flex: 2,),
-                      _buttonCard("Manage Employees", "manage_employees"),
+                      _buttonCard("Manage Staff", "manage_employees"),
                       Spacer(flex: 1,),
                     ],
                   ),
@@ -263,14 +292,26 @@ class _HomeState extends State<Home> {
     return InkWell(
       onTap: () {
         if(route == "accept_orders") {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return AcceptOrders();
-          }));
+          if(widget.store_type!=null) {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return AcceptOrders(store_type: widget.store_type,number: phone_number,);
+            }));
+          }else{
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return AcceptOrders(number: phone_number??"error",);
+            }));
+          }
         }
         else if(route == "manage_orders") {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return ManageOrdersHome();
-          }));
+          if(widget.store_type!=null){
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return ManageOrdersHome(store_type: widget.store_type);
+            }));
+          } else {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return ManageOrdersHome();
+            }));
+          }
         }
         else if(route=="manage_inventory"){
           Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductList(id:widget.id)));
@@ -313,10 +354,10 @@ class _HomeState extends State<Home> {
         buttonHeight: 22.0,
         buttonWidth: 42.0,
         indicatorWidth: 15.0,
-        backgroundColor: Colors.white,
-        unCheckedColor: Colors.grey,
+        backgroundColor: Colors.yellow,
+        unCheckedColor: Colors.green,
         animationDuration: Duration(milliseconds: 200),
-        checkedColor: Colors.black,
+        checkedColor: Colors.blue,
         checked: status,
       ),
       decoration: BoxDecoration(
@@ -356,9 +397,9 @@ class _HomeState extends State<Home> {
               borderRadius: BorderRadius.all(Radius.circular(20.0))
           ),
           child: Container(
-            padding: EdgeInsets.all(20.0.h),
-            height: 220.0.h,
-            width: 340.0.w,
+            padding: EdgeInsets.all(20.0),
+            height: 220.0,
+            width: 340.0,
             child: Column(
               children: <Widget>[
                 InkWell(
@@ -440,9 +481,9 @@ class _HomeState extends State<Home> {
                       Navigator.of(context).pop();
                   },
                   child: Container(
-                      padding: EdgeInsets.all(2.0.h),
-                      height: 28.0.h,
-                      width: 60.0.w,
+                      padding: EdgeInsets.all(2.0),
+                      height: 28.0,
+                      width: 60.0,
                       decoration: BoxDecoration(
                           color: AppColors.orange,
                           borderRadius: BorderRadius.all(Radius.circular(30.0))

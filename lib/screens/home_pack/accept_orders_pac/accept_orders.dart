@@ -6,6 +6,9 @@ import 'package:winkl/config/theme.dart';
 import 'accept_order_details.dart';
 
 class AcceptOrders extends StatefulWidget {
+  String store_type;
+  String number;
+  AcceptOrders({this.store_type, this.number});
   @override
   _AcceptOrdersState createState() => _AcceptOrdersState();
 }
@@ -47,7 +50,7 @@ class _AcceptOrdersState extends State<AcceptOrders> {
         child: Container(
           margin: EdgeInsets.only(top: 20),
           child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance.collection('customers').snapshots(),
+            stream: FirebaseFirestore.instance.collection('orders').snapshots(),
             builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot){
               final int count=snapshot.data.docs.length;
               if(snapshot.data==null){
@@ -104,7 +107,7 @@ class _AcceptOrdersState extends State<AcceptOrders> {
                                     text: 'Customer Name: ',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.red),
                                     children: <TextSpan>[
                                       TextSpan(
-                                        text: '${data.get('name')}',style: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey),
+                                        text: '${data.get('order_name')}',style: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey),
                                       ),
                                     ]
                                 ),
@@ -138,9 +141,28 @@ class _AcceptOrdersState extends State<AcceptOrders> {
                               Text('view >',style: TextStyle(color: Colors.grey)),
                             ],
                           ),
-                          onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>AcceptOrderDetails(order: (index+1).toString(),c_address: data.get('address'),c_name: data.get('name'),)));
-                          },
+                          onTap: () {
+                            if (widget.store_type != null) {
+                              Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) =>
+                                      AcceptOrderDetails(
+                                        order: (index + 1).toString(),
+                                        c_address: data.get('address'),
+                                        c_name: data.get('order_name'),
+                                        store_type: widget.store_type,
+                                        number: widget.number,
+                                      )));
+                            }else{
+                              Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) =>
+                                      AcceptOrderDetails(
+                                        order: (index + 1).toString(),
+                                        c_address: data.get('address'),
+                                        c_name: data.get('order_name'),
+                                        number: widget.number,
+                                      )));
+                            }
+                          }
                         );
                       },
                     ),

@@ -11,8 +11,9 @@ class AcceptPartial extends StatefulWidget {
   String order;
   String c_name;
   String c_address;
+  String number;
   int n;
-  AcceptPartial({this.order,this.c_name,this.c_address,this.n});
+  AcceptPartial({this.order,this.c_name,this.c_address,this.n, this.number});
 
   @override
   _AcceptPartialState createState() => _AcceptPartialState();
@@ -141,6 +142,14 @@ class _AcceptPartialState extends State<AcceptPartial> {
                               style: TextStyle(
                                   color: Color.fromRGBO(22, 162, 55, 1),
                                   fontSize: 14.0))),
+                      Spacer(flex: 5,),
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("Phone number : ${widget.number}",
+                              style: TextStyle(
+                                  color: Colors.lightBlue,
+                                  fontSize: 14.0)),
+                      ),
                       Spacer(flex: 5,),
                       Row(
                         children: <Widget>[

@@ -13,8 +13,10 @@ class AcceptOrderDetails extends StatefulWidget {
   String c_name;
   String c_address;
   String employee;
+  String store_type;
+  String number;
 
-  AcceptOrderDetails({this.order,this.c_name,this.c_address,this.employee});
+  AcceptOrderDetails({this.order,this.c_name,this.c_address,this.employee, this.store_type, this.number});
 
   @override
   _AcceptOrderDetailsState createState() => _AcceptOrderDetailsState();
@@ -117,6 +119,19 @@ class _AcceptOrderDetailsState extends State<AcceptOrderDetails> {
                                   child: Icon(Icons.arrow_back, size: 24,
                                     color: Colors.black,)
                               ),
+                              actions: [
+                                widget.store_type!=null?IconButton(
+                                  icon: Icon(Icons.timelapse_outlined, color: Colors.black),
+                                  onPressed: (){
+                                    showDialog(
+                                      context: context,
+                                      builder: (_)=> FunkyOverlay(),
+                                    );
+                                  },
+                                  tooltip: 'Check Appointment',
+                                )
+                                    : Container()
+                              ],
                             ),
                             body: SafeArea(
                                 child: Center(
@@ -318,7 +333,7 @@ class _AcceptOrderDetailsState extends State<AcceptOrderDetails> {
             Navigator.push(context, MaterialPageRoute(builder: (context)=>AcceptScreen(order: widget.order,c_name: widget.c_name,c_address: widget.c_address,)));
           }
           else if(title == "Accept Partial") {
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>AcceptPartial(order: widget.order,c_name: widget.c_name,c_address: widget.c_address,n: Itemcount,)));
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>AcceptPartial(order: widget.order,c_name: widget.c_name,c_address: widget.c_address,n: Itemcount,number: widget.number,)));
           }
           else {
             Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>Home()), (route) => false);
@@ -356,6 +371,96 @@ class _AcceptOrderDetailsState extends State<AcceptOrderDetails> {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: Colors.black)
+      ),
+    );
+  }
+}
+
+class FunkyOverlay extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => FunkyOverlayState();
+}
+
+class FunkyOverlayState extends State<FunkyOverlay>
+    with SingleTickerProviderStateMixin {
+  AnimationController controller;
+  Animation<double> scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 450));
+    scaleAnimation =
+        CurvedAnimation(parent: controller, curve: Curves.elasticInOut);
+
+    controller.addListener(() {
+      setState(() {});
+    });
+
+    controller.forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Material(
+        color: Colors.transparent,
+        child: ScaleTransition(
+          scale: scaleAnimation,
+          child: Container(
+            height: 250,
+            width: 320,
+            decoration: ShapeDecoration(
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0))),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ListTile(
+                    leading: Text('Appointment status : ', style: TextStyle(color: Colors.black, fontSize: 17, fontWeight: FontWeight.bold),),
+                    title: Text('Done', style: TextStyle(color: Colors.grey, fontSize: 17, fontWeight: FontWeight.w900)),
+                  ),
+                  Text('(Please check your Date and Time below)', style: TextStyle(color: Colors.red),),
+                  ListTile(
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Image(image: AssetImage('images/chronometer.png'),
+                          height: 30,
+                          width: 30,
+                          fit: BoxFit.contain,
+                        ),
+                        SizedBox(width: 20,),
+                        Text('5:00', style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    trailing: Text('Edit', style: TextStyle(color: Colors.blue)),
+                  ),
+                  ListTile(
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Image(image: AssetImage('images/calendar.png'),
+                          height: 30,
+                          width: 30,
+                          fit: BoxFit.contain,
+                        ),
+                        SizedBox(width: 20,),
+                        Text('01/20/20', style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    trailing: Text('Edit', style: TextStyle(color: Colors.blue)),
+                  )
+                ],
+              )
+            ),
+          ),
+        ),
       ),
     );
   }

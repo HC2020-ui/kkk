@@ -8,13 +8,17 @@ import 'package:winkl/screens/home_pack/home.dart';
 import 'package:winkl/services_screens/services_main.dart';
 
 class NewHomeScreen extends StatefulWidget {
+
+  String store_name;
+  NewHomeScreen({this.store_name});
+
   @override
   _NewHomeScreenState createState() => _NewHomeScreenState();
 }
 
 class _NewHomeScreenState extends State<NewHomeScreen> {
   String uid;
-  FirebaseAuth _auth= FirebaseAuth.instance;
+  FirebaseAuth _auth = FirebaseAuth.instance;
   String storeType;
   String name;
 
@@ -25,20 +29,21 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
     getuid().whenComplete(() => getHomeScreen());
   }
 
-  Future getuid() async{
-    var firebaseUser= await _auth.currentUser;
+  Future getuid() async {
+    var firebaseUser = await _auth.currentUser;
     setState(() {
-      uid=firebaseUser.uid;
+      uid = firebaseUser.uid;
     });
   }
 
-  getHomeScreen() async{
-    FirebaseFirestore.instance.collection('stores').doc(uid).get().then((DocumentSnapshot data){
+  getHomeScreen() async {
+    FirebaseFirestore.instance.collection('stores').doc(uid).get().then((
+        DocumentSnapshot data) {
       setState(() {
-        storeType=data.get('store_type').toString().toLowerCase();
-        name= data.get('proprietor_name').toString();
+        storeType = data.get('store_type').toString().toLowerCase();
+        name = data.get('proprietor_name').toString();
       });
-    }).catchError((e){
+    }).catchError((e) {
       print(e);
     });
   }
@@ -49,8 +54,10 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
       backgroundColor: Colors.grey.shade300,
       body: SafeArea(
         child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
           child: Container(
-            margin: EdgeInsets.fromLTRB(20, 5, 20, 5),
+            height: MediaQuery.of(context).size.height+50,
+            margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
             decoration: BoxDecoration(
               color: Colors.white70,
               borderRadius: BorderRadius.circular(15),
@@ -59,75 +66,124 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20,top: 30),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20, top: 30),
+                        child: Align(
+                            alignment: Alignment.topLeft,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Hello', style: TextStyle(
+                                    fontWeight: FontWeight.w500, fontSize: 20)),
+                                Text(name ?? 'Loading...', style: TextStyle(
+                                    fontWeight: FontWeight.w900, fontSize: 30)),
+                              ],
+                            )
+                        ),
+                      ),
+                      SizedBox(width: 20,),
+                      Container(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Hello',style: TextStyle(fontWeight: FontWeight.w500,fontSize: 20),),
-                            Text(name??'Loading...',style: TextStyle(fontWeight: FontWeight.w900,fontSize: 30),),
-                          ],
-                        )
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.settings),
-                            onPressed: (){
-                              if(uid!=null) {
-                                if(storeType!=null){
-                                  if(storeType=='services'){
-                                    Navigator.push(context, MaterialPageRoute(
-                                        builder: (context) => Home(id: uid,)));
-                                  }else{
-                                    Navigator.push(context, MaterialPageRoute(
-                                        builder: (context) => Homepage()));
+                            IconButton(
+                              icon: Icon(Icons.settings),
+                              onPressed: () {
+                                if (uid != null) {
+                                  if (storeType != null) {
+                                    if (storeType == 'services') {
+                                      Navigator.push(context, MaterialPageRoute(
+                                          builder: (context) => Home(id: uid,
+                                            store_type: storeType,)));
+                                    } else {
+                                      Navigator.push(context, MaterialPageRoute(
+                                          builder: (context) => Home()));
+                                    }
+                                  } else {
+                                    Toast.show('Store Type data is null', context,
+                                        duration: Toast.LENGTH_SHORT,
+                                        gravity: Toast.BOTTOM);
                                   }
-                                }else{
-                                  Toast.show('Store Type data is null', context,duration: Toast.LENGTH_SHORT,gravity: Toast.BOTTOM);
+                                } else {
+                                  Toast.show('User ID is null', context,
+                                      duration: Toast.LENGTH_SHORT,
+                                      gravity: Toast.BOTTOM);
                                 }
-                              }else{
-                                Toast.show('User ID is null', context,duration: Toast.LENGTH_SHORT,gravity: Toast.BOTTOM);
-                              }
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.notifications,color: Colors.lightBlueAccent),
-                            onPressed: null,
-                          ),
-                          CircleAvatar(
-                            backgroundImage: NetworkImage('https://images-na.ssl-images-amazon.com/images/I/91ldxI0EEnL._SL1500_.jpg')
-                          ),
-                        ],
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.notifications,
+                                  color: Colors.lightBlueAccent),
+                              onPressed: null,
+                            ),
+                            CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                    'https://images-na.ssl-images-amazon.com/images/I/91ldxI0EEnL._SL1500_.jpg')
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 SizedBox(height: 20,),
                 Padding(
                   padding: const EdgeInsets.only(left: 20),
-                  child: Text('Your Owned Stores',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                  child: Text('Your Owned Stores', style: TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 20),),
                 ),
                 SizedBox(height: 20,),
-
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  height: 80,
-                  child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: 5,
-                      itemBuilder: (context, index) {
-                        return StoreCard();
-                      }),
+                Center(
+                  child: Container(
+                    margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    height: 85,
+                    child: GestureDetector(
+                      onTap: () {
+                        Toast.show('Coming Soon...', context,
+                            duration: Toast.LENGTH_SHORT,
+                            gravity: Toast.CENTER);
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(right: 0, top: 0),
+                        child: Stack(
+                          children: <Widget>[
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(5),
+                              child: CachedNetworkImage(
+                                imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS7nTXTue92M7ViJqRt-qvanji6UTwss9GK2A&usqp=CAU',
+                                height: 120,
+                                width: 240,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Container(
+                              alignment: Alignment.center,
+                              height: 120,
+                              width: 280,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: Colors.black26),
+                              child: Text(
+                                widget.store_name,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
                 // Container(
                 //   margin: EdgeInsets.only(left: 20,right: 10),
@@ -145,8 +201,8 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                 SizedBox(height: 15,),
                 SingleChildScrollView(
                   child: Container(
-                    margin: EdgeInsets.fromLTRB(8,20,8,10),
-                    height: 380,
+                    margin: EdgeInsets.fromLTRB(8, 10, 8, 10),
+                    height: MediaQuery.of(context).size.height-230,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(18),
@@ -157,8 +213,9 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
-                            child: Text('Details Till Now...',style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold)),
+                            padding: const EdgeInsets.fromLTRB(20, 20, 0, 30),
+                            child: Text('Details Till Now...', style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold)),
                           ),
                           SizedBox(height: 10,),
                           Row(
@@ -172,7 +229,8 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                                 decoration: BoxDecoration(
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Color.fromRGBO(7,9,32, 1).withOpacity(0.2),
+                                        color: Color.fromRGBO(7, 9, 32, 1)
+                                            .withOpacity(0.2),
                                         blurRadius: 3,
                                         spreadRadius: 1,
                                         offset: Offset(
@@ -186,23 +244,28 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment
+                                      .spaceBetween,
                                   children: [
-                                    Text('1920',style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),),
-                                    Image.asset('images/orders.png',height: 30,width: 30,),
-                                    Text('No. of Orders', style: TextStyle(fontWeight: FontWeight.bold),),
+                                    Text('1920', style: TextStyle(fontSize: 30,
+                                        fontWeight: FontWeight.bold),),
+                                    Image.asset('images/orders.png', height: 30,
+                                      width: 30,),
+                                    Text('No. of Orders', style: TextStyle(
+                                        fontWeight: FontWeight.bold),),
                                   ],
                                 ),
                               ),
                               Container(
                                 height: 140,
                                 width: 140,
-                                padding: EdgeInsets.fromLTRB(10,20,10,20),
+                                padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
                                 margin: EdgeInsets.all(5),
                                 decoration: BoxDecoration(
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Color.fromRGBO(7,9,32, 1).withOpacity(0.2),
+                                        color: Color.fromRGBO(7, 9, 32, 1)
+                                            .withOpacity(0.2),
                                         blurRadius: 3,
                                         spreadRadius: 1,
                                         offset: Offset(
@@ -215,12 +278,17 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                                     borderRadius: BorderRadius.circular(10)
                                 ),
                                 child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment
+                                      .spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Text('200',style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),),
-                                    Image.asset('images/employee.png',height: 30,width: 30,),
-                                    Text('No. of Employees', style: TextStyle(fontWeight: FontWeight.bold),),
+                                    Text('200', style: TextStyle(fontSize: 30,
+                                        fontWeight: FontWeight.bold),),
+                                    Image.asset(
+                                      'images/employee.png', height: 30,
+                                      width: 30,),
+                                    Text('No. of Employees', style: TextStyle(
+                                        fontWeight: FontWeight.bold),),
                                   ],
                                 ),
                               )
@@ -232,12 +300,13 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                               Container(
                                 height: 140,
                                 width: 140,
-                                padding: EdgeInsets.fromLTRB(10,20,10,20),
+                                padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
                                 margin: EdgeInsets.all(8),
-                                decoration:BoxDecoration(
+                                decoration: BoxDecoration(
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Color.fromRGBO(7,9,32, 1).withOpacity(0.2),
+                                        color: Color.fromRGBO(7, 9, 32, 1)
+                                            .withOpacity(0.2),
                                         blurRadius: 3,
                                         spreadRadius: 1,
                                         offset: Offset(
@@ -251,23 +320,29 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment
+                                      .spaceBetween,
                                   children: [
-                                    Text('50',style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold)),
-                                    Image.asset('images/services.png',height: 30,width: 30),
-                                    Text('No. of Services', style: TextStyle(fontWeight: FontWeight.bold)),
+                                    Text('50', style: TextStyle(fontSize: 30,
+                                        fontWeight: FontWeight.bold)),
+                                    Image.asset(
+                                        'images/services.png', height: 30,
+                                        width: 30),
+                                    Text('No. of Services', style: TextStyle(
+                                        fontWeight: FontWeight.bold)),
                                   ],
                                 ),
                               ),
                               Container(
                                 width: 140,
                                 height: 140,
-                                padding: EdgeInsets.fromLTRB(10,20,10,20),
+                                padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
                                 margin: EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Color.fromRGBO(7,9,32, 1).withOpacity(0.2),
+                                        color: Color.fromRGBO(7, 9, 32, 1)
+                                            .withOpacity(0.2),
                                         blurRadius: 3,
                                         spreadRadius: 1,
                                         offset: Offset(
@@ -281,11 +356,17 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment
+                                      .spaceBetween,
                                   children: [
-                                    Text('20.5 K',style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),),
-                                    Image.asset('images/money-bag.png',height: 30,width: 30,),
-                                    Text('Revenue Made', style: TextStyle(fontWeight: FontWeight.bold),),
+                                    Text('20.5 K', style: TextStyle(
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.bold),),
+                                    Image.asset(
+                                      'images/money-bag.png', height: 30,
+                                      width: 30,),
+                                    Text('Revenue Made', style: TextStyle(
+                                        fontWeight: FontWeight.bold),),
                                   ],
                                 ),
                               )
@@ -305,47 +386,4 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
   }
 }
 
-class StoreCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Toast.show('Coming Soon...', context, duration: Toast.LENGTH_SHORT,
-            gravity: Toast.CENTER);
-      },
-      child: Container(
-        margin: EdgeInsets.only(right: 12, top: 0),
-        child: Stack(
-          children: <Widget>[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(5),
-              child: CachedNetworkImage(
-                imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS7nTXTue92M7ViJqRt-qvanji6UTwss9GK2A&usqp=CAU',
-                height: 120,
-                width: 240,
-                fit: BoxFit.cover,
-              ),
-            ),
-            Container(
-              alignment: Alignment.center,
-              height: 120,
-              width: 240,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colors.black26),
-              child: Text(
-                'Stack Nation',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
