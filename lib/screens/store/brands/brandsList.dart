@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:winkl/screens/store/add_product.dart';
 
@@ -14,7 +15,7 @@ class _BPListState extends State<BPList> {
   Widget build(BuildContext context) {
     return Container(
       child: StreamBuilder<QuerySnapshot>(
-          stream: Firestore.instance.collection('brands').snapshots(),
+          stream: FirebaseFirestore.instance.collection('brands').snapshots(),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
             // count of events
             final int eventCount = snapshot.data.documents.length;

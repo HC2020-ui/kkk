@@ -45,7 +45,7 @@ dependencies:
   custom_switch_button: ^0.5.0
   flutter_screenutil: ^2.1.0
   pinput: ^0.2.0
-  font_awesome_flutter: ^8.8.1
+  font_awesome_flutter:
   flutter_datetime_picker:
   toast:
   intl: ^0.16.1
@@ -58,6 +58,11 @@ dependencies:
   cached_network_image:
   flutter_speed_dial:
   strings:
+  dotted_border:
+  social_share:
+  share:
+  url_launcher:
+  shared_preferences:
 
 dev_dependencies:
   flutter_test:
@@ -100,6 +105,13 @@ flutter:
     - burger.png
     - rupee.png
     - boxes.png
+    - wnkl.png
+    - 15256.jpg
+    - chronometer.png
+    - calendar.png
+    - settings.png
+    - about.png
+    - profile.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

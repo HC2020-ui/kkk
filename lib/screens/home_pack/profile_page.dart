@@ -95,13 +95,16 @@ class _ProfilePageState extends State<ProfilePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Name' ,style: TextStyle(fontWeight: FontWeight.bold),),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(widget.name!=null ?widget.name:'No value', style: TextStyle(color: Colors.black),),
-                    SizedBox(width: 10,),
-                    Text('Edit', style: TextStyle(color: Colors.blue,fontWeight: FontWeight.bold),),
-                  ],
+                SizedBox(width: 10,),
+                SingleChildScrollView(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(widget.name!=null ?widget.name:'No value', style: TextStyle(color: Colors.black),),
+                      SizedBox(width: 10,),
+                      Text('Edit', style: TextStyle(color: Colors.blue,fontWeight: FontWeight.bold),),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -112,6 +115,7 @@ class _ProfilePageState extends State<ProfilePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Phone No.', style: TextStyle(fontWeight: FontWeight.bold),),
+                SizedBox(width: 10,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -129,6 +133,7 @@ class _ProfilePageState extends State<ProfilePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Email', style: TextStyle(fontWeight: FontWeight.bold),),
+                SizedBox(width: 10,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -142,19 +147,23 @@ class _ProfilePageState extends State<ProfilePage> {
             SizedBox(height: 20,),
             Divider(height: 1, color: Colors.grey,),
             SizedBox(height: 20,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Location', style: TextStyle(fontWeight: FontWeight.bold),),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(widget.location!=null?widget.location:'No value', style: TextStyle(color: Colors.black),),
-                    SizedBox(width: 10,),
-                    Text('Edit', style: TextStyle(color: Colors.blue,fontWeight: FontWeight.bold),),
-                  ],
-                ),
-              ],
+            SingleChildScrollView(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Location', style: TextStyle(fontWeight: FontWeight.bold),),
+                  SizedBox(width: 10,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width:230,
+                          child: SingleChildScrollView(child: Text(widget.location!=null?widget.location:'No value', style: TextStyle(color: Colors.black),))),
+                      Text('Edit', style: TextStyle(color: Colors.blue,fontWeight: FontWeight.bold),),
+                    ],
+                  ),
+                ],
+              ),
             ),
             SizedBox(height: 20),
             Divider(height: 1, color: Colors.grey),
@@ -163,6 +172,7 @@ class _ProfilePageState extends State<ProfilePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Vendor Type', style: TextStyle(fontWeight: FontWeight.bold),),
+                SizedBox(width: 10,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

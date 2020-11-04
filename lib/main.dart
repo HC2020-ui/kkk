@@ -6,16 +6,23 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:winkl/config/theme.dart';
+import 'package:winkl/dark_theme/dart_theme_provider.dart';
+import 'package:winkl/dark_theme/styles.dart';
 import 'package:winkl/screens/home_pack/accept_orders_pac/accept.dart';
 import 'package:winkl/screens/home_pack/accept_orders_pac/accept_partial.dart';
 import 'package:winkl/screens/home_pack/home.dart';
 import 'package:winkl/screens/home_pack/manage_inventory/productsList.dart';
+import 'package:winkl/screens/home_pack/membership.dart';
 import 'package:winkl/screens/home_pack/newHomeScreen.dart';
 import 'package:winkl/screens/otp_screens/verify_otp.dart';
 import 'package:winkl/screens/store/add_brands.dart';
+import 'package:winkl/screens/store/add_product.dart';
+import 'package:winkl/screens/store/add_variants.dart';
 import 'package:winkl/screens/store/brands/add_service.dart';
+import 'package:winkl/screens/store/product_search.dart';
 import 'package:winkl/services/auth.dart';
 import 'package:winkl/services_screens/services_main.dart';
+import 'package:winkl/settings_page.dart';
 import 'package:winkl/user.dart';
 import 'config/routes.dart';
 import 'package:winkl/login.dart';
@@ -47,24 +54,56 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+  DarkThemeProvider themeChangeProvider= new DarkThemeProvider();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getCurrentAppTheme();
+  }
+
+  void getCurrentAppTheme() async {
+    themeChangeProvider.darkTheme =
+    await themeChangeProvider.darkThemePreference.getTheme();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<UserData>.value(
-      value: AuthService().user,
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        routes: <String, WidgetBuilder>{
-          WinklRoutes.login: (context) => Login(),
-          WinklRoutes.home: (BuildContext context) => Home(),
-          WinklRoutes.intro: (BuildContext context) => new IntroScreen(),
-          '/store_form': (context) => StoreForm(),
-          '/add_brands': (context) => AddBrands("","","","","","","","","",""),
-          '/verify_otp': (context) => VerifyOtp("","","","","","","","",""),
-          '/accept_partial': (context) => AcceptPartial(),
-          '/accept_screen': (context) => AcceptScreen(),
-        },
-        home: Wrapper(),
+    final themeChange = Provider.of<DarkThemeProvider>(context);
+    return ChangeNotifierProvider(
+      create: (_) {
+        return themeChangeProvider;
+      },
+      child: Consumer<DarkThemeProvider>(
+          builder: (BuildContext context, value, Widget child) {
+            return StreamProvider<UserData>.value(
+              value: AuthService().user,
+              child: MaterialApp(
+                debugShowCheckedModeBanner: false,
+                theme: Styles.themeData(themeChange.darkTheme, context),
+                routes: <String, WidgetBuilder>{
+                  WinklRoutes.login: (context) => Login(),
+                  WinklRoutes.home: (BuildContext context) => Home(),
+                  WinklRoutes.intro: (
+                      BuildContext context) => new IntroScreen(),
+                  '/store_form': (context) => StoreForm(),
+                  '/add_brands': (context) => AddBrands(),
+                  '/verify_otp': (context) => VerifyOtp("", "", "", "", "", "", "", "", ""),
+                  '/accept_partial': (context) => AcceptPartial(),
+                  '/accept_screen': (context) => AcceptScreen(),
+                },
+                home: Wrapper(),
+              ),
+            );
+          }
       ),
     );
   }
@@ -78,20 +117,25 @@ class Wrapper extends StatefulWidget {
 
 class _WrapperState extends State<Wrapper> {
   var storeType;
-  var firestoreInstance=FirebaseFirestore.instance;
+  var firestoreInstance = FirebaseFirestore.instance;
   var uid;
+  String imageUrl= 'https://image.winudf.com/v2/image/Y29tLk1vbmtleS5ELkx1ZmZ5LldhbGxwYXBlcnMuRmFuc0FydDIuaW5zdXJhbmNlLlByb3BlcnR5LkhEX3NjcmVlbl8zXzE1MTU4MTY5ODhfMDMw/screen-3.jpg?fakeurl=1&type=.jpg';
   Timer timer;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    timer=Timer.periodic(Duration(seconds: 5), (Timer timer){
-      if(FirebaseAuth.instance.currentUser!=null){
+    timer = Timer.periodic(Duration(seconds: 5), (Timer timer) async {
+      if (await FirebaseAuth.instance.currentUser != null) {
         print(FirebaseAuth.instance.currentUser);
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>IntroScreen()));
-      }else{
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>NewHomeScreen()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> Home(id: FirebaseAuth.instance.currentUser.uid)));
+        // Navigator.pushReplacement(
+        //     context, MaterialPageRoute(builder: (context) => AddBrands(establishmanetName: 'Nukkud store',proprietorName: 'luffy',email: 'abc123@gmail.com', phone: '9905683164',storeType: 'services',serviceValue: '3-5 kms',serviceType: 'Fruits and vegetables',gps: 'No address',imageUrl: imageUrl
+        //   ,uid: '12457896',)));//NewHomeScreen()));
+      } else {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => IntroScreen()));
       }
     });
   }
@@ -115,7 +159,9 @@ class _WrapperState extends State<Wrapper> {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
+          color: Theme
+              .of(context)
+              .scaffoldBackgroundColor,
         ),
         child: Center(
           child: Column(
@@ -126,12 +172,16 @@ class _WrapperState extends State<Wrapper> {
               Image.asset(
                 'wnkl.png',
                 width: 150,
+                height: 150,
                 fit: BoxFit.cover,
+                color: Colors.green,
               ),
               SizedBox(height: 50),
               CircularProgressIndicator(
                 valueColor:
-                AlwaysStoppedAnimation<Color>(Theme.of(context).hintColor),
+                AlwaysStoppedAnimation<Color>(Theme
+                    .of(context)
+                    .hintColor),
               ),
             ],
           ),
@@ -203,3 +253,4 @@ class _WrapperState extends State<Wrapper> {
 //    );
 //  }
 //}
+}

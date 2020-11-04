@@ -1,5 +1,8 @@
+
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:strings/strings.dart';
 import 'package:winkl/config/theme.dart';
 import 'package:winkl/screens/home_pack/manage_employees/add_employees.dart';
 
@@ -128,28 +131,69 @@ class _EmployeeListState extends State<EmployeeList> {
                       itemCount: eventCount ,
                       itemBuilder: (context, index) {
                         final DocumentSnapshot data = snapshot.data.docs[index];
-                        return new ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage('https://www.grocapitus.com/wp-content/uploads/placeholder-profile-male-500x500.png'),
+                        return InkWell(
+                          child: Container(
+                            margin: EdgeInsets.fromLTRB(5, 10, 5, 10),
+                            height: 150,
+                            child: new Card(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    child: Image(
+                                      image: NetworkImage('https://www.grocapitus.com/wp-content/uploads/placeholder-profile-male-500x500.png'),
+                                      height: 100,
+                                      width: 100,
+                                      fit: BoxFit.contain,
+                                    ),
+                                    padding: EdgeInsets.all(10),
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Text(capitalize(data.get('name').toString())??"Loading...",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25,color: Colors.grey)),
+                                      Text(capitalize(data.get('role'))??"Loading...",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.redAccent,fontSize: 18)),
+                                      SizedBox(width: 20,),
+                                      Text(data.get('phone')??"Loading...",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.grey.shade500,fontSize: 15))
+                                    ],
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                  )
+                                ],
+                              ),
+                              elevation: 5.0,
+                              color: Colors.white,
+                            ),
                           ),
-                          title: Text(data.get('name').toString()??"Loading...",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20)),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(data.get('role')??"Loading...",style: TextStyle(fontWeight: FontWeight.bold)),
-                              SizedBox(width: 20,),
-                              Text(data.get('phone')??"Loading...",style: TextStyle(fontWeight: FontWeight.bold))
-                            ],
-                          ),
-                          trailing: Text('view',style: TextStyle(color: Colors.red),textAlign: TextAlign.end),
                           onTap: (){
                             _showDialog(data);
-                          },
+                            },
                           onLongPress: (){
                             Navigator.pop(context);
                             deleteDialogbox(data);
-                          },
+                            },
                         );
+                        // return new ListTile(
+                        //   leading: CircleAvatar(
+                        //     backgroundImage: NetworkImage('https://www.grocapitus.com/wp-content/uploads/placeholder-profile-male-500x500.png'),
+                        //   ),
+                        //   title: Text(data.get('name').toString()??"Loading...",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20)),
+                        //   subtitle: Column(
+                        //     crossAxisAlignment: CrossAxisAlignment.start,
+                        //     children: [
+                        //       Text(data.get('role')??"Loading...",style: TextStyle(fontWeight: FontWeight.bold)),
+                        //       SizedBox(width: 20,),
+                        //       Text(data.get('phone')??"Loading...",style: TextStyle(fontWeight: FontWeight.bold))
+                        //     ],
+                        //   ),
+                        //   trailing: Text('view',style: TextStyle(color: Colors.red),textAlign: TextAlign.end),
+                        //   onTap: (){
+                        //     _showDialog(data);
+                        //   },
+                        //   onLongPress: (){
+                        //     Navigator.pop(context);
+                        //     deleteDialogbox(data);
+                        //   },
+                        // );
                       }
                   ),
                   floatingActionButton: new FloatingActionButton(
@@ -280,7 +324,7 @@ class _EmployeeListState extends State<EmployeeList> {
         // return object of type Dialog
         return AlertDialog(
           title: new Text("Confirmation",style: TextStyle(color: Colors.red)),
-          content: new Text("Do you want to Add more Employess?"),
+          content: new Text("Do you want to Add more Employees?"),
           actions: <Widget>[
             new FlatButton(
               child: new Text("Yes"),

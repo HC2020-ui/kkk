@@ -15,8 +15,11 @@ class ProductSearch extends StatefulWidget {
 class _ProductSearchState extends State<ProductSearch> {
   @override
   String name = "";
-  TextEditingController searchController= TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
+  TextEditingController searchController = TextEditingController();
+  bool isEmpty = false;
+  var searchText = "";
+  bool isLoadingMoreData = false;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +31,6 @@ class _ProductSearchState extends State<ProductSearch> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Container(
                     margin: const EdgeInsets.fromLTRB(15,15,0,15),
@@ -38,21 +40,21 @@ class _ProductSearchState extends State<ProductSearch> {
                       controller: searchController,
                       style: TextStyle(color: Colors.black,fontWeight: FontWeight.w900),
                       decoration: InputDecoration(
-                          fillColor: Colors.white,
+                        fillColor: Colors.white,
                         focusedBorder: OutlineInputBorder(
                           borderSide: new BorderSide(color: Colors.black),
                         ),
-                          border: new OutlineInputBorder(
-                            borderSide: new BorderSide(color: Colors.grey),
-                          ),
-                          prefixIcon: Icon(Icons.search,color: Colors.grey),
-                          suffixIcon: IconButton(
-                            icon: Icon(Icons.clear,color: Colors.grey,),
-                            onPressed: (){
-                              searchController.text="";
-                            },
-                          ),
-                          hintText: 'Search by name'
+                        border: new OutlineInputBorder(
+                          borderSide: new BorderSide(color: Colors.grey),
+                        ),
+                        prefixIcon: Icon(Icons.search,color: Colors.grey),
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.clear,color: Colors.grey,),
+                          onPressed: (){
+                            searchController.clear();
+                          },
+                        ),
+                        hintText: 'Search',
                       ),
                       onChanged: (val) {
                         setState(() {
@@ -62,13 +64,13 @@ class _ProductSearchState extends State<ProductSearch> {
                     ),
                   ),
                   Container(
-                    width: 90,
-                    child: FlatButton(
-                      child: Text('Category'),
-                      onPressed: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=> SerachByCategory()));
-                      },
-                    )
+                      width: 90,
+                      child: FlatButton(
+                        child: Text('Category'),
+                        onPressed: (){
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> SerachByCategory()));
+                        },
+                      )
                   )
                 ],
               ),
@@ -80,10 +82,20 @@ class _ProductSearchState extends State<ProductSearch> {
                     stream: (name != "" && name != null)
                         ? FirebaseFirestore.instance
                         .collection('products')
-                        .where("name", isEqualTo: name)
+                        .where("category", isEqualTo: name)
                         .snapshots()
                         : FirebaseFirestore.instance.collection("products").snapshots(),
                     builder: (context, snapshot) {
+                      int count= snapshot.data.docs.length;
+                      if(count==0){
+                        return ListTile(
+                          title: Text('Add Yourself', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w800)),
+                          trailing: Icon(Icons.arrow_forward_ios),
+                          onTap: (){
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>AddProduct('add')));
+                          },
+                        );
+                      }
                       return (snapshot.connectionState == ConnectionState.waiting)
                           ? Center(child: CircularProgressIndicator())
                           : ListView.builder(
@@ -142,6 +154,7 @@ class _ProductSearchState extends State<ProductSearch> {
   }
 //   return new
 // }
+
 }
 
 class SerachByCategory extends StatefulWidget {
@@ -184,10 +197,10 @@ class _SerachBycategoryState extends State<SerachByCategory> {
                           suffixIcon: IconButton(
                             icon: Icon(Icons.clear,color: Colors.grey,),
                             onPressed: (){
-                              categoryController.text="";
+                              categoryController.clear();
                             },
                           ),
-                          hintText: 'Search by Category',
+                          hintText: 'Search',
                       ),
                       onChanged: (val) {
                         setState(() {

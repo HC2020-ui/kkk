@@ -316,6 +316,7 @@ class _ProductListState extends State<ProductList> {
                     fit: BoxFit.cover
                 ),
               ),
+              SizedBox(height: 20,),
               RichText(
                 text: TextSpan(
                   text: 'category: ',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black,fontSize: 20),
@@ -326,7 +327,28 @@ class _ProductListState extends State<ProductList> {
                   ]
                 ),
               ),
-              Spacer(flex: 5),
+              SizedBox(height: 20,),
+              RichText(
+                text: TextSpan(
+                    text: 'Brand: ',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black,fontSize: 20),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: data.get('brand_name')??"loading...",style: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey),
+                      )
+                    ]
+                ),
+              ),
+              SizedBox(height: 10,),
+              RichText(
+                text: TextSpan(
+                    text: 'Details: ',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black,fontSize: 20),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: data.get('details')??"loading...",style: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey),
+                      )
+                    ]
+                ),
+              ),
               // RichText(
               //   text: TextSpan(
               //       text: 'size: ',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black,fontSize: 20),
@@ -348,7 +370,7 @@ class _ProductListState extends State<ProductList> {
               //       ]
               //   ),
               // ),
-              Spacer(flex: 5,),
+              SizedBox(height: 10,),
             ],
           ),
           actions: <Widget>[

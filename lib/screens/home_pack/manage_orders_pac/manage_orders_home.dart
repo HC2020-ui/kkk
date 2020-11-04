@@ -9,6 +9,8 @@ import 'package:winkl/screens/home_pack/manage_orders_pac/delivered_details.dart
 import 'package:winkl/screens/home_pack/manage_orders_pac/manage_orders_delivered.dart';
 
 class ManageOrdersHome extends StatefulWidget {
+  String store_type;
+  ManageOrdersHome({this.store_type});
   @override
   _ManageOrdersHomeState createState() => _ManageOrdersHomeState();
 }

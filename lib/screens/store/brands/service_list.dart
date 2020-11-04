@@ -14,7 +14,7 @@ class _ServiceListState extends State<ServiceList> {
   Widget build(BuildContext context) {
     return Container(
       child: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('addServices').snapshots(),
+          stream: FirebaseFirestore.instance.collection('services').snapshots(),
           builder: (BuildContext context,
               AsyncSnapshot<QuerySnapshot> snapshot) {
             // count of events
@@ -114,7 +114,7 @@ class _ServiceListState extends State<ServiceList> {
                           Spacer(flex: 2,),
                           Align(
                               alignment: Alignment.center,
-                              child: Text("Add Product", style: TextStyle(
+                              child: Text("Add Service", style: TextStyle(
                                   color: AppColors.white,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold),)),
@@ -138,17 +138,17 @@ class _ServiceListState extends State<ServiceList> {
                         final DocumentSnapshot data = snapshot.data.docs[index];
                         return new ListTile(
                           title: Text(
-                              data.get('service_name').toString() ?? "Loading...",
+                              data.get('name').toString() ?? "Loading...",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 20)),
                           subtitle: Text(
-                              data.get('details') ?? "Loading...",
+                              data.get('category') ?? "Loading...",
                               style: TextStyle(fontWeight: FontWeight.bold)),
                           trailing: Text(
                               'view', style: TextStyle(color: Colors.red),
                               textAlign: TextAlign.end),
                           onTap: () {
-                            _showDialog(data);
+                            // _showDialog(data);
                           },
                           onLongPress: () {
                             Navigator.pop(context);

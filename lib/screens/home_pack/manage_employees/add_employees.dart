@@ -90,16 +90,15 @@ class _AddEmployeesState extends State<AddEmployees> {
         title: new Text("New Employee"),
         actions: <Widget>[
           new IconButton(icon: const Icon(Icons.save), onPressed: () {
-            if(_formkey.currentState.validate()) {
-              _showdialogbox();
-            }
+            // if(_formkey.currentState.validate()) {
+            //   _showdialogbox();
+            // }
           })
         ],
       ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Container(
-          height: MediaQuery.of(context).size.height,
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        child: SingleChildScrollView(
           child: Form(
             key: _formkey,
             child: new Column(
@@ -165,7 +164,7 @@ class _AddEmployeesState extends State<AddEmployees> {
                     ),
                     SizedBox(width: 10,),
                     Container(
-//            width: 300,
+                      // width: 300,
                       decoration: BoxDecoration(
                           border: Border.all(color: AppColors.orange, width: 2),
                           borderRadius: BorderRadius.all(Radius.circular(10))),
