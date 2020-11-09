@@ -37,6 +37,35 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:398834040326:android:d488459a3925ae18c28d87",
+        "android_client_info": {
+          "package_name": "com.example.order_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "398834040326-ktpqfvukboldbsl2cp4pqs43q2grdrka.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8gZcSriIpfITpQGFTm8GgnYbmx9b-z2Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "398834040326-ktpqfvukboldbsl2cp4pqs43q2grdrka.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:398834040326:android:cc29e0f5fd2ae98cc28d87",
         "android_client_info": {
           "package_name": "com.example.winkl"

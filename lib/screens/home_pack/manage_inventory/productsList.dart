@@ -7,7 +7,7 @@ import 'package:winkl/config/theme.dart';
 import 'package:winkl/screens/store/brands/brandsList.dart';
 import 'package:winkl/screens/store/product_search.dart';
 
-import '../../store/add_product.dart';
+import 'package:winkl/screens/home_pack/add_product.dart';
 
 class ProductList extends StatefulWidget {
   String id;

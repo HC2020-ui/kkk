@@ -8,6 +8,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 // import 'package:keyboard_avoider/keyboard_avoider.dart';
 import 'package:toast/toast.dart';
@@ -17,7 +18,10 @@ import 'package:winkl/dialog_box.dart';
 import 'package:winkl/main.dart';
 import 'package:winkl/screens/store/add_variants.dart';
 import 'package:winkl/screens/store/product_search.dart';
+import 'dart:io'as i;
 
+i.File _imageFile;
+i.File image;
 class AddProduct extends StatefulWidget {
   String event;
   String documentid;
@@ -39,35 +43,17 @@ class _AddProductState extends State<AddProduct> {
   TextEditingController discount_controller= TextEditingController();
   TextEditingController finalPrice_controller= TextEditingController();
   var uuid = Uuid();
-  String imageUrl="https://www.essentiallysports.com/wp-content/uploads/IMG_20191230_233458.jpg";
+  String imageUrl;
   String name;
   String mrp;
   String Sellingprice;
   String offer;
   String details;
-  String _imageUrl= "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png";
+  String _imageUrl;
 
 
   String cat_val = "Choose Category";
   String brand_name="";
-  // List<String> catlist = [
-  //   'Choose Category',
-  //   'Category 1',
-  //   'Category 2',
-  //   'Category 3',
-  //   'Category 4',
-  //   'Category 5',
-  // ];
-  //
-  // String unit_val = "piece";
-  // List<String> unitsList = [
-  //   "piece",
-  //   "kg",
-  //   "gm",
-  //   "litre",
-  //   "ml",
-  //   "dozen"
-  // ];
 
   String instock="Instock";
   List<String> instocklist = [
@@ -75,86 +61,7 @@ class _AddProductState extends State<AddProduct> {
     'yes',
     'no'
   ];
-  // var _myPets = List<Widget>();
-  // int _index = 1;
-  // var _myPets1 = List<Widget>();
-  // int _index1 = 1;
-  //
-  // void _add1(){
-  //   TextEditingController controller= new TextEditingController();
-  //   int keyValue = _index1;
-  //   _myPets1 = List.from(_myPets1)
-  //     ..add(Column(
-  //       key: Key("${keyValue}"),
-  //       children: [
-  //         ListTile(
-  //           title:new TextFormField(
-  //             controller: controller,
-  //             autovalidate: false,
-  //             validator: (val){
-  //               return val.isEmpty? 'Please enter Description ':null;
-  //             },
-  //             onChanged: (value){
-  //               setState(() {
-  //                 offer= value;
-  //               });
-  //             },
-  //             decoration: new InputDecoration(
-  //               hintText: "Enter Description (Optional)",
-  //             ),
-  //           ),
-  //           trailing: IconButton(
-  //             icon: Icon(Icons.clear),
-  //             onPressed: (){
-  //               _myPets1.remove(controller);
-  //               --_index1;
-  //             },
-  //           ),
-  //         )
-  //       ],
-  //     ));
-  //
-  //   setState(() {
-  //     ++_index1;
-  //   });
-  // }
-  //
-  // void _add() {
-  //   int keyValue = _index;
-  //   TextEditingController controller= new TextEditingController();
-  //   _myPets = List.from(_myPets)
-  //     ..add(Column(
-  //       key: Key("${keyValue}"),
-  //       children: [
-  //         ListTile(
-  //           title:new TextFormField(
-  //             controller: controller,
-  //             autovalidate: false,
-  //             validator: (val){
-  //               return val.isEmpty? 'Please enter Discount ':null;
-  //             },
-  //             onChanged: (value){
-  //               setState(() {
-  //                 offer= value;
-  //               });
-  //             },
-  //             decoration: new InputDecoration(
-  //               hintText: "Discounted Price",
-  //             ),
-  //           ),
-  //           trailing: IconButton(
-  //             icon: Icon(Icons.clear),
-  //             onPressed: (){
-  //               _myPets.remove(controller);
-  //               --_index;
-  //             },
-  //           ),
-  //         )
-  //       ],
-  //     ));
-  //
-  //   setState(() => ++_index);
-  // }
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -211,10 +118,17 @@ class _AddProductState extends State<AddProduct> {
                         child: Column(
                           children: [
                             Center(
-                              child: Image.network('https://tekrabuilders.com/wp-content/uploads/2018/12/male-placeholder-image.jpeg',
-                              height: 100,
-                                width: 100,
-                                fit: BoxFit.contain,
+                              child: GestureDetector(
+                                child: Image.network('https://tekrabuilders.com/wp-content/uploads/2018/12/male-placeholder-image.jpeg',
+                                height: 100,
+                                  width: 100,
+                                  fit: BoxFit.contain,
+                                ),
+                                onTap: (){
+                                  print("Photo");
+                                  // pickimage(ImageSource.gallery);
+                                  _showMyDialog(context);
+                                },
                               )
                             ),
                           ],
@@ -248,165 +162,6 @@ class _AddProductState extends State<AddProduct> {
                   ),
                 )),
 
-//                 new ListTile(
-//                   leading: const Icon(Icons.person),
-//                   title: new TextFormField(
-//                     autovalidate: false,
-//                     validator: (val){
-//                       return val.isEmpty ? "Plz Provide Item name" : null;
-//                     },
-//                     onChanged: (value){
-//                       setState(() {
-//                         name=value;
-//                       });
-//                     },
-//                     decoration: new InputDecoration(
-//                       hintText: "Item Name and Size",
-//                     ),
-//                   ),
-//                 ),
-//                 SizedBox(height: 10),
-//                 // ListTile(
-//                 //   title: Text('+ Add Discount on this Item (Optional)',textAlign: TextAlign.left ,style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold)),
-//                 //   onTap: (){
-//                 //     _add();
-//                 //   },
-//                 // ),
-//                 // SizedBox(height: 10,),
-//                 // Container(
-//                 //   height: 50,
-//                 //   child:ListView(
-//                 //     shrinkWrap: true,
-//                 //     padding: EdgeInsets.all(10),
-//                 //     physics: NeverScrollableScrollPhysics(),
-//                 //     children: _myPets,
-//                 //   ),
-//                 // ),
-//                 SizedBox(height: 10,),
-//                 new ListTile(
-//                   leading: const Text('\u{20B9}'),
-//                   title: new TextFormField(
-//                     autovalidate: false,
-//                     validator: (val){
-//                       return val.isEmpty? 'Please enter the price':null;
-//                     },
-//                     onChanged: (value){
-//                       setState(() {
-//                         Sellingprice=value;
-//                       });
-//                     },
-//                     decoration: new InputDecoration(
-//                       hintText: "Price",
-//                     ),
-//                   ),
-//                 ),
-//                 new ListTile(
-//                   leading: const Icon(Icons.details),
-//                   title: new TextFormField(
-//                     autovalidate: false,
-//                     validator: (val){
-//                       return val.isEmpty ? "Please enter Product details" : null;
-//                     },
-//                     onChanged: (value){
-//                       setState(() {
-//                         details=value;
-//                       });
-//                     },
-//                     decoration: new InputDecoration(
-//                       hintText: "Product Details",
-//                     ),
-//                   ),
-//                 ),
-//
-//                 Container(
-//                   margin: EdgeInsets.all(10),
-// //            width: 300,
-//                   decoration: BoxDecoration(
-//                       border: Border.all(color: AppColors.orange, width: 2),
-//                       borderRadius: BorderRadius.all(Radius.circular(10))),
-//                   child: ButtonTheme(
-//                     alignedDropdown: false,
-//                     child: Padding(
-//                       padding: const EdgeInsets.all(8.0),
-//                       child: DropdownButtonHideUnderline(
-//                         child: DropdownButton<String>(
-//                           hint: Text('Instock'),
-//                           value: instock,
-//                           isExpanded: true,
-//                           underline: Container(
-//                             height: 2,
-//                             color: AppColors.orange,
-//                           ),
-//                           onChanged: (String newValue) {
-//                             setState(() {
-//                               instock = newValue;
-//                             });
-//                           },
-//                           items: instocklist.map<DropdownMenuItem<String>>((String value) {
-//                             return DropdownMenuItem(
-//                               value: value,
-//                               child: Text(value),
-//                             );
-//                           }).toList(),
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//                 // new ListTile(
-//                 //   leading: const Icon(Icons.storage),
-//                 //   title: new TextFormField(
-//                 //     autovalidate: false,
-//                 //     validator: (val){
-//                 //       return val.isEmpty ? "Required field" : null;
-//                 //     },
-//                 //     onChanged: (value){
-//                 //       setState(() {
-//                 //         instock=value;
-//                 //       });
-//                 //     },
-//                 //     decoration: new InputDecoration(
-//                 //       hintText: "In stock",
-//                 //     ),
-//                 //   ),
-//                 // ),
-//                 SizedBox(height: 10,),
-//                 Container(
-//                   margin: EdgeInsets.all(10),
-// //            width: 300,
-//                   decoration: BoxDecoration(
-//                       border: Border.all(color: AppColors.orange, width: 2),
-//                       borderRadius: BorderRadius.all(Radius.circular(10))),
-//                   child: ButtonTheme(
-//                     padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-//                     alignedDropdown: false,
-//                     child: Padding(
-//                       padding: const EdgeInsets.all(8.0),
-//                       child: DropdownButtonHideUnderline(
-//                         child: DropdownButton<String>(
-//                           hint: Text('Choose Category'),
-//                           value: cat_val,
-//                           isExpanded: true,
-//                           underline: Container(
-//                             height: 2,
-//                             color: AppColors.orange,
-//                           ),
-//                           onChanged: (String newValue) {
-//                             setState(() {
-//                               cat_val = newValue;
-//                             });
-//                           },
-//                           items: catlist.map<DropdownMenuItem<String>>((String value) {
-//                             return DropdownMenuItem(
-//                               value: value,
-//                               child: Text(value),
-//                             );
-//                           }).toList(),
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
                 SizedBox(height: 20,),
                 Container(child: TextFormField(
                   controller: cat_controller,
@@ -602,32 +357,32 @@ class _AddProductState extends State<AddProduct> {
     );
   }
 
-  Widget getProfileImageWidget(BuildContext context) {
-    return Container(
-      height: 100,
-      width: 100,
-      decoration:
-      BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(20))),
-      child: GestureDetector(
-//
-        onTap: () {
-          _showMyDialog(context);
-        },
-        child: ClipRRect(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-          child: FadeInImage.assetNetwork(
-              placeholder: "images/placeholder.png",
-              image: _imageUrl,
-              height: 300,
-              width: 300,
-              fit: BoxFit.cover
-          ),
+//   Widget getProfileImageWidget(BuildContext context) {
+//     return Container(
+//       height: 100,
+//       width: 100,
+//       decoration:
+//       BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(20))),
+//       child: GestureDetector(
+// //
+//         onTap: () {
+//           _showMyDialog(context);
+//         },
+//         child: ClipRRect(
+//           borderRadius: BorderRadius.all(Radius.circular(10)),
+//           child: FadeInImage.assetNetwork(
+//               placeholder: "images/placeholder.png",
+//               image: _imageUrl,
+//               height: 300,
+//               width: 300,
+//               fit: BoxFit.cover
+//           ),
 
-        ),
-      ),
+//         ),
+//       ),
 
-    );
-  }
+//     );
+//   }
 
 
   Future<void> _showMyDialog(BuildContext context) async {
@@ -654,7 +409,7 @@ class _AddProductState extends State<AddProduct> {
                     ),
                     onPressed: () {
                       Navigator.pop(context);
-                      getImage(ImageSource.camera);
+                      pickimage(ImageSource.camera);
                     },
                   ),
                   Text(
@@ -676,8 +431,8 @@ class _AddProductState extends State<AddProduct> {
                       color: AppColors.white,
                     ),
                     onPressed: () {
-                      Navigator.pop(context);
-                      getImage(ImageSource.gallery);
+                      // Navigator.pop(context);
+                      pickimage(ImageSource.gallery);
                     },
                   ),
                   Text(
@@ -697,80 +452,95 @@ class _AddProductState extends State<AddProduct> {
     );
   }
 
-  Future getImage(ImageSource source) async {
+  Future<void>pickimage(ImageSource source)async{
+    
+    i.File selected = await ImagePicker.pickImage(source: source);
+    if(selected!=null){
+      i.File cropped = await ImageCropper.cropImage(
+        sourcePath: selected.path,
+        compressQuality: 100,
+        compressFormat: ImageCompressFormat.jpg,
+        androidUiSettings: AndroidUiSettings(
+          toolbarColor: Colors.purple,
+          toolbarTitle: "CROP",
+          statusBarColor: Colors.blueGrey,
+          backgroundColor: Colors.white,
+        )
+      );
+      setState(() {
+        _imageFile = cropped;
+         image=i.File(_imageFile.path);
+      });
+    }
+  }
+  
+
+  addtoDatabase() async {
     String uniqueId = uuid.v1();
     String url;
     FirebaseStorage storage = FirebaseStorage.instance;
+    setState(() async{
+      StorageReference reference =
+      storage.ref().child("profileImages/${uniqueId}");
 
-    File image;
-    try {
-      //Get the file from the image picker and store it
-      var img = await ImagePicker().getImage(source: source);
+      //Upload the file to firebase
+      StorageUploadTask uploadTask = reference.putFile(image);
 
-      setState(() {
-        image=File(img.path);
-      });
+      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
 
-    } on PlatformException catch (e) {
-      //PlatformException is thrown with code : this happen when user back with don't
-      //selected image or not approve permission so stop method here
-      // check e.code to know what type is happen
-      return;
-    }
+      // Waits till the file is uploaded then stores the download url
+      url = await taskSnapshot.ref.getDownloadURL();
 
-    //Create a reference to the location you want to upload to in firebase
-    StorageReference reference =
-    storage.ref().child("profileImages/${uniqueId}");
+      print(url);
 
-    //Upload the file to firebase
-    StorageUploadTask uploadTask = reference.putFile(image);
-
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-
-    // Waits till the file is uploaded then stores the download url
-    url = await taskSnapshot.ref.getDownloadURL();
-
-    print(url);
-
-    setState(() {
       _imageUrl = url;
-    });
-
-
-  }
-
-
-
-  addtoDatabase() async {
-
-    await FirebaseFirestore.instance.collection('stores').doc(widget.id).collection('products').doc(uuid.v1())
-        .set({
-      'category':cat_val,
-      'name':name,
-      'selling_price':Sellingprice,
-      'imageUrl':imageUrl,
-      'details':details,
-      'instock':instock.toLowerCase(),
-      'addedby': 'user',
-    }).then((value) {
-      Toast.show("Your Product details has been saved!!!", context,duration: Toast.LENGTH_SHORT,gravity: Toast.BOTTOM);
-      print("success");
+      await FirebaseFirestore.instance.collection('stores').doc(widget.id).collection('products').doc(uuid.v1())
+          .set({
+        'category':cat_val,
+        'name':name,
+        'selling_price':Sellingprice,
+        'imageUrl':_imageUrl,
+        'details':details,
+        'instock':instock.toLowerCase(),
+        'addedby': 'user',
+      }).then((value) {
+        Toast.show("Your Product details has been saved!!!", context,duration: Toast.LENGTH_SHORT,gravity: Toast.BOTTOM);
+        print("success");
+      });
     });
   }
 
   updatabase() async{
-    FirebaseFirestore.instance.collection('stores').doc(widget.id).collection('products')
-        .doc(widget.documentid)
-        .update({
-      'category':cat_val,
-      'name':name,
-      'selling_price':Sellingprice,
-      'imageUrl':imageUrl,
-      'details':details,
-      'instock':instock.toLowerCase(),
-        }).then((value) {
-          Toast.show("Your Product details has been updated!!!", context,duration: Toast.LENGTH_SHORT,gravity: Toast.BOTTOM);
-       print("success");
+    String uniqueId = uuid.v1();
+    String url;
+    FirebaseStorage storage = FirebaseStorage.instance;
+    setState(() async{
+      StorageReference reference =
+      storage.ref().child("profileImages/${uniqueId}");
+
+      //Upload the file to firebase
+      StorageUploadTask uploadTask = reference.putFile(image);
+
+      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+
+      // Waits till the file is uploaded then stores the download url
+      url = await taskSnapshot.ref.getDownloadURL();
+
+      print(url);
+      _imageUrl = url;
+      await FirebaseFirestore.instance.collection('stores').doc(widget.id).collection('products')
+          .doc(widget.documentid)
+          .update({
+        'category':cat_val,
+        'name':name,
+        'selling_price':Sellingprice,
+        'imageUrl':_imageUrl,
+        'details':details,
+        'instock':instock.toLowerCase(),
+          }).then((value) {
+            Toast.show("Your Product details has been updated!!!", context,duration: Toast.LENGTH_SHORT,gravity: Toast.BOTTOM);
+        print("success");
+      });
     });
   }
 }

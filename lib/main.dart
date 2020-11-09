@@ -16,7 +16,7 @@ import 'package:winkl/screens/home_pack/membership.dart';
 import 'package:winkl/screens/home_pack/newHomeScreen.dart';
 import 'package:winkl/screens/otp_screens/verify_otp.dart';
 import 'package:winkl/screens/store/add_brands.dart';
-import 'package:winkl/screens/store/add_product.dart';
+import 'package:winkl/screens/home_pack/add_product.dart';
 import 'package:winkl/screens/store/add_variants.dart';
 import 'package:winkl/screens/store/brands/add_service.dart';
 import 'package:winkl/screens/store/product_search.dart';
@@ -60,7 +60,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
+  
   DarkThemeProvider themeChangeProvider= new DarkThemeProvider();
 
   @override
@@ -77,13 +77,14 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final themeChange = Provider.of<DarkThemeProvider>(context);
+   
     return ChangeNotifierProvider(
       create: (_) {
         return themeChangeProvider;
       },
       child: Consumer<DarkThemeProvider>(
           builder: (BuildContext context, value, Widget child) {
+            final themeChange = Provider.of<DarkThemeProvider>(context);
             return StreamProvider<UserData>.value(
               value: AuthService().user,
               child: MaterialApp(

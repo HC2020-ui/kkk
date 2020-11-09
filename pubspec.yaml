@@ -28,41 +28,42 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.3
-  firebase_auth:
-  introduction_screen:
-  google_fonts:
-  image_picker:
-  path_provider:
-  google_maps_flutter:
-  flutter_spinkit:
-  search_map_place:
-  flutter_google_places:
-  flare_flutter:
-  cloud_firestore:
-  firebase_storage:
-  uuid:
+  firebase_auth: ^0.18.2
+  introduction_screen: ^1.0.9
+  google_fonts: ^1.1.1
+  image_picker: ^0.6.3+1
+  path_provider: ^1.6.24
+  google_maps_flutter: ^0.5.13
+  image_cropper: ^1.2.0
+  flutter_spinkit: ^4.1.2+1
+  search_map_place: ^0.3.0
+  flutter_google_places: ^0.2.6
+  flare_flutter: ^2.0.6
+  cloud_firestore: ^0.14.1
+  firebase_storage: ^4.0.1
+  uuid: ^2.2.2
   keyboard_avoider: ^0.1.2
   custom_switch_button: ^0.5.0
   flutter_screenutil: ^2.1.0
   pinput: ^0.2.0
-  font_awesome_flutter:
-  flutter_datetime_picker:
-  toast:
+  font_awesome_flutter: ^8.10.0
+  flutter_datetime_picker: ^1.4.0
+  toast: ^0.1.5
   intl: ^0.16.1
-  provider:
+  provider: ^4.3.2+2
   google_sign_in:
   geolocator: ^6.0.0
-  geocoding:
+  geocoding: ^1.0.5
   firebase_core : ^0.5.0
-  fancy_bottom_navigation:
-  cached_network_image:
-  flutter_speed_dial:
-  strings:
-  dotted_border:
-  social_share:
-  share:
-  url_launcher:
-  shared_preferences:
+  fancy_bottom_navigation: ^0.3.2
+  cached_network_image: ^2.3.3
+  flutter_speed_dial: ^1.2.5
+  strings: ^0.1.4
+  dotted_border: ^1.0.6
+  social_share: ^2.0.5
+  share: ^0.6.5+4
+  url_launcher: ^5.7.10
+  shared_preferences: ^0.5.12+4
 
 dev_dependencies:
   flutter_test:

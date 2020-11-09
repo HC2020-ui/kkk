@@ -229,7 +229,7 @@ class _AddVariantsState extends State<AddVariants> {
                           child: TextFormField(
                             style: TextStyle(fontWeight: FontWeight.bold),
                             controller: color_controller,
-                            decoration: InputDecoration.collapsed(),
+                            decoration: InputDecoration.collapsed(hintText: "T"),
                             validator: (input) => input == "" ? 'The task is empty' : null,
                           ),
                         )
@@ -314,7 +314,7 @@ class _AddVariantsState extends State<AddVariants> {
                             keyboardType: TextInputType.number,
                             style: TextStyle(fontWeight: FontWeight.bold),
                             controller: mrp_controller,
-                            decoration: InputDecoration.collapsed(),
+                            decoration: InputDecoration.collapsed(hintText: "T"),
                             validator: (input) => input == "" ? 'The task is empty' : null,
                           ),
                         )
@@ -336,7 +336,7 @@ class _AddVariantsState extends State<AddVariants> {
                             keyboardType: TextInputType.number,
                             style: TextStyle(fontWeight: FontWeight.bold),
                             controller: offer_controller,
-                            decoration: InputDecoration.collapsed(),
+                            decoration: InputDecoration.collapsed(hintText: "T"),
                             validator: (input) => input == "" ? 'The task is empty' : null,
                             onChanged: (value){
                               setState(() {
@@ -370,7 +370,7 @@ class _AddVariantsState extends State<AddVariants> {
                             keyboardType: TextInputType.number,
                             style: TextStyle(fontWeight: FontWeight.bold),
                             controller: discount_controller,
-                            decoration: InputDecoration.collapsed(),
+                            decoration: InputDecoration.collapsed(hintText: "T"),
                             validator: (input) => input == "" ? 'The task is empty' : null,
                           ),
                         )
@@ -458,7 +458,7 @@ class _AddSizeState extends State<AddSize> {
                           child: TextFormField(
                             style: TextStyle(fontWeight: FontWeight.bold),
                             controller: size_controller,
-                            decoration: InputDecoration.collapsed(),
+                            decoration: InputDecoration.collapsed(hintText: "T"),
                             validator: (input) => input == "" ? 'The task is empty' : null,
                           ),
                         )
@@ -478,7 +478,7 @@ class _AddSizeState extends State<AddSize> {
                           child: TextFormField(
                             style: TextStyle(fontWeight: FontWeight.bold),
                             controller: detail_controller,
-                            decoration: InputDecoration.collapsed(),
+                            decoration: InputDecoration.collapsed(hintText: "T"),
                             validator: (input) => input == "" ? 'The task is empty' : null,
                           ),
                         )
@@ -502,7 +502,7 @@ class _AddSizeState extends State<AddSize> {
                             keyboardType: TextInputType.number,
                             style: TextStyle(fontWeight: FontWeight.bold),
                             controller: mrp_controller,
-                            decoration: InputDecoration.collapsed(),
+                            decoration: InputDecoration.collapsed(hintText: "T"),
                             validator: (input) => input == "" ? 'The task is empty' : null,
                           ),
                         )
@@ -524,7 +524,7 @@ class _AddSizeState extends State<AddSize> {
                             keyboardType: TextInputType.number,
                             style: TextStyle(fontWeight: FontWeight.bold),
                             controller: offer_controller,
-                            decoration: InputDecoration.collapsed(),
+                            decoration: InputDecoration.collapsed(hintText: "T"),
                             validator: (input) => input == "" ? 'The task is empty' : null,
                             onChanged: (value){
                               setState(() {
@@ -558,7 +558,7 @@ class _AddSizeState extends State<AddSize> {
                             keyboardType: TextInputType.number,
                             style: TextStyle(fontWeight: FontWeight.bold),
                             controller: discount_controller,
-                            decoration: InputDecoration.collapsed(),
+                            decoration: InputDecoration.collapsed(hintText: "T"),
                             validator: (input) => input == "" ? 'The task is empty' : null,
                           ),
                         )

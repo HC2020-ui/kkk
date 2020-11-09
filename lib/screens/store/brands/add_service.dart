@@ -11,7 +11,7 @@ import 'package:uuid/uuid.dart';
 import 'package:winkl/config/theme.dart';
 import 'package:winkl/screens/home_pack/home.dart';
 
-import '../add_product.dart';
+import 'package:winkl/screens/home_pack/add_product.dart';
 import '../add_variants.dart';
 import '../product_search.dart';
 

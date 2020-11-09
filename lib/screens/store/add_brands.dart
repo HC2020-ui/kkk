@@ -1,10 +1,13 @@
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:winkl/screens/home_pack/home.dart';
-
+import 'dart:io'as i;
 class AddBrands extends StatefulWidget {
   String establishmanetName;
   String proprietorName;
@@ -24,6 +27,9 @@ class AddBrands extends StatefulWidget {
 
 bool checkedValue = true;
 int selectedRadoButton = 1;
+FirebaseStorage _storage = FirebaseStorage(storageBucket: 'gs://wnkl-f55a7.appspot.com');
+StorageUploadTask _uploadTask;
+i.File _imageFile;
 
 class _AddBrandsState extends State<AddBrands> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -42,6 +48,26 @@ class _AddBrandsState extends State<AddBrands> {
     });
     addDatatoDatabase(context);
 
+  }
+  
+  Future<void>pickimage(ImageSource source)async{
+    i.File selected = await ImagePicker.pickImage(source: source);
+    if(selected!=null){
+      i.File cropped = await ImageCropper.cropImage(
+        sourcePath: selected.path,
+        compressQuality: 100,
+        compressFormat: ImageCompressFormat.jpg,
+        androidUiSettings: AndroidUiSettings(
+          toolbarColor: Colors.purple,
+          toolbarTitle: "CROP",
+          statusBarColor: Colors.blueGrey,
+          backgroundColor: Colors.white,
+        )
+      );
+      setState(() {
+        _imageFile = cropped;
+      });
+    }
   }
 
 
@@ -142,16 +168,15 @@ class _AddBrandsState extends State<AddBrands> {
           .collection("stores")
           .doc(firebaseUser.uid)
           .set({
-          "uid": widget.uid?? "error",
-        "email": widget.email?? "error",
-        "phone":  widget.phone?? "error",
-        "seller_category": widget.serviceType?? "error",
-        "establishment_name": widget.establishmanetName?? "error",
-        "proprietor_name": widget.proprietorName?? "error",
-        "service_radius": widget.serviceValue?? "error",
-        "store_type": widget.storeType?? "error",
-        "area": widget.gps?? "error",
-        "imageUrl": widget.imageUrl?? "error"
+            "uid": widget.uid?? "error",
+            "email": widget.email?? "error",
+            "phone":  widget.phone?? "error",
+            "seller_category": widget.serviceType?? "error",
+            "establishment_name": widget.establishmanetName?? "error",
+            "proprietor_name": widget.proprietorName?? "error",
+            "service_radius": widget.serviceValue?? "error",
+            "store_type": widget.storeType?? "error",
+            "imageUrl": widget.imageUrl?? "error"
       }).then((value) {
         print('successfully added');
         _scaffoldKey.currentState.showSnackBar(SnackBar(
