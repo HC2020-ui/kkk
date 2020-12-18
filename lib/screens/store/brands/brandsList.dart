@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:winkl/config/theme.dart';
+import 'package:winkl/screens/store/add_brands.dart';
 import 'package:winkl/screens/store/add_product.dart';
 
 class BPList extends StatefulWidget {
@@ -18,7 +20,7 @@ class _BPListState extends State<BPList> {
           stream: FirebaseFirestore.instance.collection('brands').snapshots(),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
             // count of events
-            final int eventCount = snapshot.data.documents.length;
+            final int eventCount = snapshot.data.docs.length;
             if(snapshot.data==null){
               return Center(child: CircularProgressIndicator());
             }
@@ -57,10 +59,43 @@ class _BPListState extends State<BPList> {
                 return SafeArea(
                   child: Scaffold(
                     appBar: AppBar(
-                      title: Text('Brands'),
+                      elevation: 0.0,
+                      title: Container(
+                        padding: EdgeInsets.only(top: 7.0, bottom: 7.0, left: 10.0, right: 10.0),
+                        height: 45.0,
+                        width: 345.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Color.fromRGBO(93, 187, 99, 1),
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            Text("LOGO", style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),),
+                            Spacer(flex: 2,),
+                            Align(
+                                alignment: Alignment.center,
+                                child: Text("Brand List", style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),)),
+                            Spacer(flex: 3,),
+                          ],
+                        ),
+                      ),
                       actions: [
-                        IconButton(icon: Icon(Icons.search,color: Colors.white,), onPressed: null)
+                        IconButton(
+                          icon: Icon(Icons.search,color: Colors.black,),
+                          color: Colors.black26,
+                          onPressed: (){
+                            
+                          },
+                        )
                       ],
+                      centerTitle: true,
+                      backgroundColor: Colors.white,
+                      leading: InkWell(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Icon(Icons.arrow_back, size: 24.0, color: Colors.black),
+                      ),
                     ),
                     body: Container(
                       margin: EdgeInsets.fromLTRB(5, 5, 5, 20),
@@ -90,11 +125,11 @@ class _BPListState extends State<BPList> {
                       ),
                       ),
                     floatingActionButton: new FloatingActionButton(
-                        elevation: 0.0,
+                        elevation: 2.0,
                         child: new Icon(Icons.add),
-                        backgroundColor: new Color(0xFFE57373),
+                        backgroundColor: new Color.fromRGBO(93, 187, 99, 1),
                         onPressed: (){
-
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=>AddBrands()));
                         }
                     ),
                   ),

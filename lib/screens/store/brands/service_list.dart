@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
@@ -23,39 +24,32 @@ class _ServiceListState extends State<ServiceList> {
               return Scaffold(
                 appBar: AppBar(
                   elevation: 0.0,
-                  title: Container(
-                    padding: EdgeInsets.only(
-                        top: 7.0, bottom: 7.0, left: 10.0, right: 10.0),
+                  title:     Container(
+                    padding: EdgeInsets.only(top: 7.0, bottom: 7.0, left: 10.0, right: 10.0),
                     height: 45.0,
-                    width: 345.0,
+                    width: 300.0,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: Color.fromRGBO(255, 117, 117, 1),
+                      color: Color.fromRGBO(93, 187, 99, 1),
                     ),
-                    child: Row(
-                      children: <Widget>[
-                        Text("LOGO", style: TextStyle(color: AppColors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),),
-                        Spacer(flex: 2,),
-                        Align(
-                            alignment: Alignment.center,
-                            child: Text("Add Service", style: TextStyle(
-                                color: AppColors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),)),
-                        Spacer(flex: 3,),
-                      ],
-                    ),
+                    child: Align(
+                        alignment: Alignment.center,
+                        child: Text("Add Services", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),)),
+                    // child: Row(
+                    //   children: <Widget>[
+                    //     // Text("LOGO", style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),),
+                    //     // Spacer(flex: 2,),
+                    //
+                    //   ],
+                    // ),
                   ),
                   centerTitle: true,
                   backgroundColor: Colors.white,
-                  leading: InkWell(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Icon(
-                        Icons.arrow_back, size: 24.0, color: Colors.black),
+                  leading: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset(
+                      "images/logo_app.png",
+                    ),
                   ),
                 ),
                 body: SafeArea(
@@ -97,64 +91,113 @@ class _ServiceListState extends State<ServiceList> {
                 return Scaffold(
                   appBar: AppBar(
                     elevation: 0.0,
-                    title: Container(
-                      padding: EdgeInsets.only(
-                          top: 7.0, bottom: 7.0, left: 10.0, right: 10.0),
+                    title:     Container(
+                      padding: EdgeInsets.only(top: 7.0, bottom: 7.0, left: 10.0, right: 10.0),
                       height: 45.0,
-                      width: 345.0,
+                      width: 300.0,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: Color.fromRGBO(255, 117, 117, 1),
+                        color: Color.fromRGBO(93, 187, 99, 1),
                       ),
-                      child: Row(
-                        children: <Widget>[
-                          Text("LOGO", style: TextStyle(color: AppColors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold),),
-                          Spacer(flex: 2,),
-                          Align(
-                              alignment: Alignment.center,
-                              child: Text("Add Service", style: TextStyle(
-                                  color: AppColors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),)),
-                          Spacer(flex: 3,),
-                        ],
-                      ),
+                      child: Align(
+                          alignment: Alignment.center,
+                          child: Text("Services", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),)),
+                      // child: Row(
+                      //   children: <Widget>[
+                      //     // Text("LOGO", style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),),
+                      //     // Spacer(flex: 2,),
+                      //
+                      //   ],
+                      // ),
                     ),
                     centerTitle: true,
                     backgroundColor: Colors.white,
-                    leading: InkWell(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Icon(
-                          Icons.arrow_back, size: 24.0, color: Colors.black),
+                    leading: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.asset(
+                        "images/logo_app.png",
+                      ),
                     ),
                   ),
                   body: new ListView.builder(
                       itemCount: eventCount,
                       itemBuilder: (context, index) {
                         final DocumentSnapshot data = snapshot.data.docs[index];
-                        return new ListTile(
-                          title: Text(
-                              data.get('name').toString() ?? "Loading...",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20)),
-                          subtitle: Text(
-                              data.get('category') ?? "Loading...",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          trailing: Text(
-                              'view', style: TextStyle(color: Colors.red),
-                              textAlign: TextAlign.end),
-                          onTap: () {
-                            // _showDialog(data);
-                          },
-                          onLongPress: () {
-                            Navigator.pop(context);
-                            deleteDialogbox(data);
-                          },
+                        var width=MediaQuery.of(context).size.width;
+                        return  Container(
+                          decoration: boxDecoration(showShadow: true, radius: 10.0),
+                          padding: EdgeInsets.all(8.0),
+                          margin: EdgeInsets.only(
+                              left: 16.0,
+                              right: 16.0,
+                              bottom: 16.0),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                flex: 1,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  child: CachedNetworkImage(
+                                    imageUrl: 'https://howandwhat.net/wp-content/uploads/2017/08/Service.jpg',
+                                    fit: BoxFit.fill,
+                                    height: width * 0.2,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 16.0,
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text(data.get('Name'), style: TextStyle(fontSize: 17),),
+                                      ],
+                                    ),
+                                    Text(data.get('Category'), style: TextStyle(color: Color(0xFF888888)),),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Row(
+                                          children: <Widget>[
+                                            Text(data.get('Brand')),
+                                            SizedBox(
+                                              width: 4.0,
+                                            ),
+                                            Text(data.get('Year'), style: TextStyle(color: Color(0xFF888888))),
+                                          ],
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
                         );
+                        // return new ListTile(
+                        //   title: Text(
+                        //       data.get('name').toString() ?? "Loading...",
+                        //       style: TextStyle(
+                        //           fontWeight: FontWeight.bold, fontSize: 20)),
+                        //   subtitle: Text(
+                        //       data.get('category') ?? "Loading...",
+                        //       style: TextStyle(fontWeight: FontWeight.bold)),
+                        //   trailing: Text(
+                        //       'view', style: TextStyle(color: Colors.red),
+                        //       textAlign: TextAlign.end),
+                        //   onTap: () {
+                        //     // _showDialog(data);
+                        //   },
+                        //   onLongPress: () {
+                        //     Navigator.pop(context);
+                        //     deleteDialogbox(data);
+                        //   },
+                        // );
                       }
                   ),
                   floatingActionButton: new FloatingActionButton(
@@ -164,6 +207,7 @@ class _ServiceListState extends State<ServiceList> {
                           builder: (context) =>
                               AddServices()));
                     },
+                    backgroundColor: Color.fromRGBO(93, 187, 99, 1),
                   ),
                 );
             }
@@ -276,4 +320,13 @@ class _ServiceListState extends State<ServiceList> {
       },
     );
   }
+}
+
+BoxDecoration boxDecoration({double radius = 10, Color color = Colors.transparent, Color bgColor = const Color(0xFFFFFFFF), var showShadow = false}) {
+  return BoxDecoration(
+      color: bgColor,
+      //gradient: LinearGradient(colors: [bgColor, whiteColor]),
+      boxShadow: showShadow ? [BoxShadow(color: Color(0X95E9EBF0), blurRadius: 10, spreadRadius: 2)] : [BoxShadow(color: Colors.transparent)],
+      border: Border.all(color: color),
+      borderRadius: BorderRadius.all(Radius.circular(radius)));
 }

@@ -62,14 +62,18 @@ class Login extends StatelessWidget {
                   padding: EdgeInsets.all(16),
                   onPressed: () {
                     final phone = _phoneController.text.trim();
-
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Otp(
-                                  phoneNumber: phone,
-                                )));
+                    if(phone!=null || phone!="") {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  Otp(
+                                    phoneNumber: phone,
+                                  )));
 //                    loginUser(phone, context);
+                    }else{
+                      Toast.show('Please Enter the phone', context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+                    }
                   },
                   color: AppColors.orange,
                 ),

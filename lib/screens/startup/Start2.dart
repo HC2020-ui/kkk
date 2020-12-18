@@ -25,13 +25,14 @@ class _StartScreenState extends State<StartScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                  margin: EdgeInsets.only(top: 20.0),
+                  margin: EdgeInsets.only(top: 50.0),
                   child: Image(
-                    image: AssetImage('images/wnkl.png'),
+                    image: AssetImage('images/logo_app.png'),
                     fit: BoxFit.cover,
-                    width: 300,
-                    height: 300,
+                    width: 200,
+                    height: 200,
                   )),
+              SizedBox(height: 20,),
               Container(
                 child: Text(advertiseText,
                     textAlign: TextAlign.center,

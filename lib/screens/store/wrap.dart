@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:winkl/screens/home_pack/home.dart';
+import 'package:winkl/screens/home_pack/newHomePage.dart';
 import 'package:winkl/screens/store/store_form.dart';
 
 class Wrapper2 extends StatefulWidget {
@@ -24,7 +25,7 @@ class _Wrapper2State extends State<Wrapper2> {
     getdata();
   }
 
-  getdata() async{
+  getdata() async {
     final snapShot = await FirebaseFirestore.instance.collection('stores').doc(widget.id).get();
     if (snapShot == null || !snapShot.exists) {
       setState(() {
@@ -42,7 +43,7 @@ class _Wrapper2State extends State<Wrapper2> {
     if(exist==null){
       return Scaffold(body: Container(child: Center(child: CircularProgressIndicator())));
     }
-    return exist? Home(id: widget.id): StoreForm(id: widget.id,Phone: widget.phone,);
+    return exist? NewHomePage(uid: widget.id): StoreForm(id: widget.id,Phone: widget.phone,);
   }
 }
 

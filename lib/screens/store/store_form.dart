@@ -3,7 +3,11 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+// import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:keyboard_avoider/keyboard_avoider.dart';
+import 'package:search_map_place/search_map_place.dart';
 import 'package:winkl/config/theme.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -44,6 +48,8 @@ class _StoreFormState extends State<StoreForm> {
   String _establishmanetName;
   String _proprietorName;
   String _email;
+  String lat;
+  String long;
   var _phone="";
   String _gps = 'Wait for few seconds...';
   String _serviceValue = 'Service Radius';
@@ -51,7 +57,8 @@ class _StoreFormState extends State<StoreForm> {
   String _storeValue = 'Select Store Type';
   // String _uid;
   bool _isVerified = false;
-  String _imageUrl= "https://lh3.googleusercontent.com/proxy/nVTJRAA9cP_kupvg194edu3VIav6t8_NdT1vL94qgJITsCTTaAQRrEd1Dz3FGSjJgUr44bEYhIK4PNosX5inMeRquLglDw";
+  String _imageUrl= "https://www.wikihow.com/images/6/61/Draw-a-Cartoon-Man-Step-15.jpg";
+  Address first;
 
   ///Firebase instances
 //  FirebaseUser currentUser;
@@ -114,15 +121,15 @@ class _StoreFormState extends State<StoreForm> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: AppColors.white,
-      appBar: AppBar(
-        elevation: 0.0,
-        backgroundColor: AppColors.white,
-        leading: InkWell(
-          onTap: () {
-            Navigator.of(context).pop();
-          },
-            child: Icon(Icons.arrow_back, size: 24.0, color: Colors.black,)),
-      ),
+      // appBar: AppBar(
+      //   elevation: 0.0,
+      //   backgroundColor: AppColors.orange,
+      //   leading: InkWell(
+      //     onTap: () {
+      //       Navigator.of(context).pop();
+      //     },
+      //       child: Icon(Icons.arrow_back, size: 24.0, color: Colors.black,)),
+      // ),
       body: KeyboardAvoider(
         autoScroll: false,
         child: SingleChildScrollView(
@@ -160,6 +167,7 @@ class _StoreFormState extends State<StoreForm> {
                 child: Column(
                   children: [
                     Container(
+
                       child: TextFormField(
                         autovalidate: _autoValidation,
                         textAlign: TextAlign.left,
@@ -229,8 +237,9 @@ class _StoreFormState extends State<StoreForm> {
           Container(
 //            width: 300,
             decoration: BoxDecoration(
-                border: Border.all(color: AppColors.orange, width: 2),
-                borderRadius: BorderRadius.all(Radius.circular(10))),
+                border: Border.all(color: Color.fromRGBO(93, 187, 99, 1), width: 2),
+                borderRadius: BorderRadius.all(Radius.circular(10))
+            ),
             child: ButtonTheme(
               alignedDropdown: true,
               child: DropdownButtonHideUnderline(
@@ -263,7 +272,7 @@ class _StoreFormState extends State<StoreForm> {
           Container(
 //            width: 300,
             decoration: BoxDecoration(
-                border: Border.all(color: AppColors.orange, width: 2),
+                border: Border.all(color: Color.fromRGBO(93, 187, 99, 1), width: 2),
                 borderRadius: BorderRadius.all(Radius.circular(10))),
             child: ButtonTheme(
               alignedDropdown: true,
@@ -295,7 +304,7 @@ class _StoreFormState extends State<StoreForm> {
           Container(
 //            width: 300,
             decoration: BoxDecoration(
-                border: Border.all(color: AppColors.orange, width: 2),
+                border: Border.all(color: Color.fromRGBO(93, 187, 99, 1), width: 2),
                 borderRadius: BorderRadius.all(Radius.circular(10))),
             child: ButtonTheme(
               alignedDropdown: true,
@@ -363,6 +372,7 @@ class _StoreFormState extends State<StoreForm> {
 //             ),
 //           ),
           Container(
+
               child: TextFormField(
                 autovalidate: _autoValidation,
                 onChanged: (value) {
@@ -373,30 +383,33 @@ class _StoreFormState extends State<StoreForm> {
                 decoration:
                 AppStyles.textFormFieldDecoration.copyWith(hintText: 'Address line 1'),
               )),
-          SizedBox(height: 20,),
-          Container(
-              child: TextFormField(
-                autovalidate: _autoValidation,
-                onChanged: (value) {
-                  setState(() {
-                    address2 = value;
-                  });
-                },
-                decoration:
-                AppStyles.textFormFieldDecoration.copyWith(hintText: 'Address line 2'),
-              )),
           SizedBox(height: 10,),
-          Container(
-              child: TextFormField(
-                autovalidate: _autoValidation,
-                onChanged: (value) {
-                  setState(() {
-                    landmark = value;
-                  });
-                },
-                decoration:
-                AppStyles.textFormFieldDecoration.copyWith(hintText: 'Landmark'),
-              )),
+          RaisedButton.icon(
+            icon: FaIcon(FontAwesomeIcons.check, color: Colors.white,),
+            color: Color.fromRGBO(93, 187, 99, 1),
+            label: Text('Check Address', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),),
+            onPressed: () async{
+              var address= await Geocoder.local.findAddressesFromQuery(address1);
+              first = address.first;
+              setState(() {
+                lat=first.coordinates.latitude.toString();
+                long=first.coordinates.longitude.toString();
+                country=first.countryName;
+                state=first.adminArea;
+                city=first.locality;
+                pin_code=first.postalCode;
+                landmark=first.thoroughfare;
+                area=first.subLocality;
+                print(lat);
+                print(long);
+              });
+              
+              // Prediction p = await PlacesAutocomplete.show(
+              //     context: context, apiKey: 'AIzaSyCy6I1SleZ42NlSTDVDoKx1S6r4_vEeMNw',
+              //     onError: onError);
+              // displayPrediction(p);
+            },
+          ),
           SizedBox(height: 10,),
           Container(
               child: TextFormField(
@@ -407,7 +420,7 @@ class _StoreFormState extends State<StoreForm> {
                   });
                 },
                 decoration:
-                AppStyles.textFormFieldDecoration.copyWith(hintText: 'Country'),
+                AppStyles.textFormFieldDecoration.copyWith(hintText:country=="" ?'Country':country),
               )),
           SizedBox(height: 10,),
           Container(
@@ -419,7 +432,7 @@ class _StoreFormState extends State<StoreForm> {
                   });
                 },
                 decoration:
-                AppStyles.textFormFieldDecoration.copyWith(hintText: 'State'),
+                AppStyles.textFormFieldDecoration.copyWith(hintText:state==""? 'State':state),
               )),
           SizedBox(height: 10,),
           Container(
@@ -431,7 +444,7 @@ class _StoreFormState extends State<StoreForm> {
                   });
                 },
                 decoration:
-                AppStyles.textFormFieldDecoration.copyWith(hintText: 'City'),
+                AppStyles.textFormFieldDecoration.copyWith(hintText:city==""? 'City':city),
               )),
           SizedBox(height: 10,),
           Container(
@@ -444,7 +457,7 @@ class _StoreFormState extends State<StoreForm> {
                   });
                 },
                 decoration:
-                AppStyles.textFormFieldDecoration.copyWith(hintText: 'Pin Code'),
+                AppStyles.textFormFieldDecoration.copyWith(hintText:pin_code==""? 'Pin Code':pin_code),
               )),
           SizedBox(height: 10,),
           Container(
@@ -456,7 +469,19 @@ class _StoreFormState extends State<StoreForm> {
                   });
                 },
                 decoration:
-                AppStyles.textFormFieldDecoration.copyWith(hintText: 'Area'),
+                AppStyles.textFormFieldDecoration.copyWith(hintText: area==""?'Area':area),
+              )),
+          SizedBox(height: 10,),
+          Container(
+              child: TextFormField(
+                autovalidate: _autoValidation,
+                onChanged: (value) {
+                  setState(() {
+                    landmark = value;
+                  });
+                },
+                decoration:
+                AppStyles.textFormFieldDecoration.copyWith(hintText: landmark==""?'Landmark':landmark),
               )),
           SizedBox(
             height: 30,
@@ -465,7 +490,7 @@ class _StoreFormState extends State<StoreForm> {
             width: 600,
             child: MaterialButton(
               height: 55,
-              color: AppColors.orange,
+              color: Color.fromRGBO(93, 187, 99, 1),
               child: Text(
                 'Continue',
                 style:
@@ -475,7 +500,8 @@ class _StoreFormState extends State<StoreForm> {
 //                formValidation(context);
               print(widget.Phone);
               if(_formkey.currentState.validate())
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>AddBrands( establishmanetName: _establishmanetName, proprietorName: _proprietorName,serviceType: _seType,storeType: _storeValue,email: _email,phone: _controller.text,gps: _gps,serviceValue: _serviceValue,imageUrl: _imageUrl,uid: widget.id,)));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>AddBrands( establishmanetName: _establishmanetName, proprietorName: _proprietorName,serviceType: _seType,storeType: _storeValue,email: _email,phone: _controller.text,state: state,city: city,
+                  pin_code: pin_code,area: area,address1: address1,address2: address2,landmark: landmark,serviceValue: _serviceValue,imageUrl: _imageUrl,uid: widget.id,lat: lat,long: long,)));
               },
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(

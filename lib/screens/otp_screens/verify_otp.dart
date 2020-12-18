@@ -285,21 +285,7 @@ class _VerifyOtpState extends State<VerifyOtp> {
       verificationCompleted: (AuthCredential authCredential)async{
          await _auth.signInWithCredential(authCredential).then((UserCredential result){
            if(result.user!=null) {
-             Navigator.pushReplacement(context, MaterialPageRoute(
-               builder: (context) =>
-                   AddBrands(
-                      establishmanetName: widget.establishmanetName,
-                     proprietorName: widget.proprietorName,
-                     email: widget.email,
-                     phone: widget.phone,
-                     serviceType: widget.serviceType,
-                     serviceValue: widget.serviceValue,
-                     storeType: widget.storeType,
-                     imageUrl: widget.imageUrl,
-                     gps: widget.gps,
-                     uid: result.user.uid,
-                   ),
-             ));
+
            }else{
              print("error");
            }
@@ -337,22 +323,9 @@ class _VerifyOtpState extends State<VerifyOtp> {
 
                     smsCode = otpController.text.trim();
 
-                    _credential = PhoneAuthProvider.getCredential(verificationId: verificationId, smsCode: smsCode);
+                    _credential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: smsCode);
                     await auth.signInWithCredential(_credential).then((UserCredential result) {
-                      Navigator.pushReplacement(context, MaterialPageRoute(
-                          builder: (context) => AddBrands(
-                            establishmanetName: widget.establishmanetName,
-                            proprietorName: widget.proprietorName,
-                            email: widget.email,
-                            phone: widget.phone,
-                            serviceType: widget.serviceType,
-                            serviceValue: widget.serviceValue,
-                            storeType: widget.storeType,
-                            imageUrl: widget.imageUrl,
-                            gps: widget.gps,
-                            uid: result.user.uid,
-                          ),
-                      ));
+
                     }).catchError((e){
                       print(e);
                     });

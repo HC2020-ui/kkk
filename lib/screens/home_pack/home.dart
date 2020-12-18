@@ -499,13 +499,13 @@ class _HomeState extends State<Home> {
   }
 
 
-  addTime() async {
-    var firebaseUser= await _auth.currentUser;
-    firestoreInstance.collection("stores").doc(firebaseUser.uid).update({
-      "openingTime":_time1,
-      "closingTime":_time2,
-    }).then((value) {
-      print("success");
-    });
+    addTime() async {
+      var firebaseUser= await _auth.currentUser;
+      firestoreInstance.collection("stores").doc(firebaseUser.uid).update({
+        "openingTime":_time1,
+        "closingTime":_time2,
+      }).then((value) {
+        print("success");
+      });
+    }
   }
-}

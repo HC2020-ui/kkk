@@ -82,7 +82,7 @@ class _ProductSearchState extends State<ProductSearch> {
                     stream: (name != "" && name != null)
                         ? FirebaseFirestore.instance
                         .collection('products')
-                        .where("category", isEqualTo: name)
+                        .where("name", isEqualTo: name)
                         .snapshots()
                         : FirebaseFirestore.instance.collection("products").snapshots(),
                     builder: (context, snapshot) {

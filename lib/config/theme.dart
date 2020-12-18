@@ -13,7 +13,7 @@ class AppSizes {
 
 class AppColors {
   static const white = Color(0xFFEAF0F1);
-  static const orange = Color(0xFFEA7773);
+  static const orange = Color.fromRGBO(93, 187, 99, 1);
   static const yellow = Color(0xFFFBD28B);
 }
 

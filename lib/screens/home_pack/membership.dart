@@ -4,6 +4,7 @@ import 'package:share/share.dart';
 import 'package:toast/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:winkl/config/theme.dart';
+import 'package:winkl/coupons/coupons.dart';
 import 'package:winkl/screens/home_pack/newHomeScreen.dart';
 import 'package:winkl/screens/home_pack/profile_page.dart';
 import 'package:winkl/screens/intro/intro.dart';
@@ -19,7 +20,9 @@ class MembershipPage extends StatefulWidget {
   String email;
   String storename;
   String membership;
-  MembershipPage({this.name,this.email,this.phone,this.vendor_type,this.location,this.storename,this.membership});
+  String lat;
+  String long;
+  MembershipPage({this.name,this.email,this.phone,this.vendor_type,this.location,this.storename,this.membership, this.lat, this.long});
   @override
   _MembershipPageState createState() => _MembershipPageState();
 }
@@ -61,21 +64,14 @@ class _MembershipPageState extends State<MembershipPage> {
                               },
                               ),
                               // Text('Back',style: TextStyle(color: Colors.purple,fontWeight: FontWeight.bold,fontSize: 16),textAlign: TextAlign.left,),
-                              FlatButton(
-                                child: Text('Stats>>', style: TextStyle(color: Colors.blue,fontWeight: FontWeight.bold,fontSize: 18),),
-                                onPressed: (){
-                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> NewHomeScreen(store_name: widget.storename,)));
-                                },
-                              )
                             ],
                           ),
                           Center(
                            child: Image(
-                              image: AssetImage('images/wnkl.png'),
+                              image: AssetImage('images/logo_app.png'),
                               height: 200,
                               width: 200,
                               fit: BoxFit.contain,
-                             color: Colors.green,
                             ),
                           ),
                           SizedBox(height: 10,),
@@ -83,26 +79,11 @@ class _MembershipPageState extends State<MembershipPage> {
                             fontWeight: FontWeight.w900,
                             fontSize: 30
                           ),)),
-                          SizedBox(height: 10,),
+                          SizedBox(height: 10),
                           Center(child: Text(widget.storename??'Loading...',style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 25
                           ),)),
-                          SizedBox(height:10,),
-                          Center(
-                            child: RaisedButton.icon(
-                              onPressed: (){
-                                Toast.show('Coming soon... ', context, duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-                              },
-                              elevation: 2.0,
-                              color: Colors.white,
-                              icon: Icon(Icons.change_history_sharp),
-                              label: Text('Change Icon', style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold,fontSize: 17),),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                            ),
-                          ),
                           SizedBox(height: 10,),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -163,25 +144,46 @@ class _MembershipPageState extends State<MembershipPage> {
                             Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfilePage(name: widget.name,email: widget.email,phone: widget.phone,vendor_type: widget.vendor_type,location: widget.location,storename: widget.storename)));
                           },
                         ),
+                        // ListTile(
+                        //   title: Row(
+                        //     mainAxisAlignment: MainAxisAlignment.start,
+                        //     children: [
+                        //       CircleAvatar(
+                        //         child: Image(image: AssetImage('images/stats.png'),
+                        //           height: 30,
+                        //           width: 30,
+                        //           fit: BoxFit.contain,
+                        //         ),
+                        //         backgroundColor: Colors.white,
+                        //       ),
+                        //       SizedBox(width: 20,),
+                        //       Text('My Stats', style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold)),
+                        //     ],
+                        //   ),
+                        //   trailing: Icon(Icons.arrow_forward_ios),
+                        //   onTap: (){
+                        //     Navigator.push(context, MaterialPageRoute(builder: (context)=> NewHomeScreen()));
+                        //   },
+                        // ),
                         ListTile(
                           title: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               CircleAvatar(
-                                child: Image(image: AssetImage('images/crown.png'),
+                                child: Image(image: AssetImage('images/coupons.png'),
                                   height: 30,
                                   width: 30,
                                   fit: BoxFit.contain,
                                 ),
-                                backgroundColor: Colors.red,
+                                backgroundColor: Colors.white,
                               ),
                               SizedBox(width: 20,),
-                              Text('Join Membership', style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold)),
+                              Text('Coupons', style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold)),
                             ],
                           ),
                           trailing: Icon(Icons.arrow_forward_ios),
                           onTap: (){
-                            _launchURL('https://nukkd.in/membership');
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>Coupons()));
                           },
                         ),
                         ListTile(
@@ -261,15 +263,15 @@ class _MembershipPageState extends State<MembershipPage> {
                                 size: 30,
                                   color: Colors.black,
                                 ),
-                                backgroundColor: Colors.white,
+                                backgroundColor: Colors.orange.shade500,
                               ),
                               SizedBox(width: 20,),
-                              Text('Rate Us on Play-Store', style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold)),
+                              Text('Settings', style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold)),
                             ],
                           ),
                           trailing: Icon(Icons.arrow_forward_ios),
                           onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>SettingsPage()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>SettingsPage(widget.storename, widget.lat, widget.long)));
                           },
                         ),
                         Padding(

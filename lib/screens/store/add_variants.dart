@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:keyboard_avoider/keyboard_avoider.dart';
 import 'package:toast/toast.dart';
 import 'package:winkl/config/fontstyle.dart';
@@ -33,151 +34,158 @@ class _AddVariantsState extends State<AddVariants> {
     Color.fromARGB(255, 128, 128, 128),
   ];
 
-  double _colorSliderPosition = 0;
-  double _shadeSliderPosition;
-  Color _currentColor;
-  Color _shadedColor;
+  // double _colorSliderPosition = 0;
+  // double _shadeSliderPosition;
+  // Color _currentColor;
+  // Color _shadedColor;
   TextEditingController color_controller= TextEditingController();
   TextEditingController mrp_controller= TextEditingController();
   TextEditingController offer_controller= TextEditingController();
   TextEditingController discount_controller= TextEditingController();
   String final_price="";
+  Color pickerColor = Color(0xff443a49);
+  Color currentColor = Color(0xff443a49);
+  int r_value;
+  int g_value;
+  int b_value;
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _currentColor = _calculateSelectedColor(_colorSliderPosition);
-    _shadeSliderPosition = widget.width / 2; //center the shader selector
-    _shadedColor = _calculateShadedColor(_shadeSliderPosition);
-  }
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   _currentColor = _calculateSelectedColor(_colorSliderPosition);
+  //   _shadeSliderPosition = widget.width / 2; //center the shader selector
+  //   _shadedColor = _calculateShadedColor(_shadeSliderPosition);
+  // }
 
-  _colorChangeHandler(double position) {
-    //handle out of bounds positions
-    if (position > widget.width) {
-      setState(() {
-        position = widget.width;
-      });
-    }
-    if (position < 0) {
-      setState(() {
-        position = 0;
-      });
-    }
-    print("New pos: $position");
-    setState(() {
-      _colorSliderPosition = position;
-      _currentColor = _calculateSelectedColor(_colorSliderPosition);
-      _shadedColor = _calculateShadedColor(_shadeSliderPosition);
-    });
-  }
+  // _colorChangeHandler(double position) {
+  //   //handle out of bounds positions
+  //   if (position > widget.width) {
+  //     setState(() {
+  //       position = widget.width;
+  //     });
+  //   }
+  //   if (position < 0) {
+  //     setState(() {
+  //       position = 0;
+  //     });
+  //   }
+  //   print("New pos: $position");
+  //   setState(() {
+  //     _colorSliderPosition = position;
+  //     _currentColor = _calculateSelectedColor(_colorSliderPosition);
+  //     _shadedColor = _calculateShadedColor(_shadeSliderPosition);
+  //   });
+  // }
+  //
+  // _shadeChangeHandler(double position) {
+  //   //handle out of bounds gestures
+  //   if (position > widget.width) {
+  //     setState(() {
+  //       position = widget.width;
+  //     });
+  //   };
+  //   if (position < 0) {
+  //
+  //     setState(() {
+  //       position = 0;
+  //     });
+  //   }
+  //   setState(() {
+  //     _shadeSliderPosition = position;
+  //     _shadedColor = _calculateShadedColor(_shadeSliderPosition);
+  //     if(_shadedColor.red==255 && _shadedColor.green==255 && _shadedColor.blue==255){
+  //       setState(() {
+  //         color_controller.text="white";
+  //       });
+  //     }else if(_shadedColor.red==0 && _shadedColor.green==0 && _shadedColor.blue==0){
+  //       setState(() {
+  //         color_controller.text="black";
+  //       });
+  //     }else if(_shadedColor.red == _shadedColor.green && _shadedColor.green==_shadedColor.blue && _shadedColor.red!=255 && _shadedColor.red!=0){
+  //       setState(() {
+  //         color_controller.text="grey";
+  //       });
+  //     }
+  //     print(
+  //         "r: ${_shadedColor.red}, g: ${_shadedColor.green}, b: ${_shadedColor.blue}");
+  //   });
+  // }
+  //
+  // Color _calculateShadedColor(double position) {
+  //   double ratio = position / widget.width;
+  //   if (ratio > 0.5) {
+  //     //Calculate new color (values converge to 255 to make the color lighter)
+  //     int redVal = _currentColor.red != 255
+  //         ? (_currentColor.red +
+  //         (255 - _currentColor.red) * (ratio - 0.5) / 0.5)
+  //         .round()
+  //         : 255;
+  //     int greenVal = _currentColor.green != 255
+  //         ? (_currentColor.green +
+  //         (255 - _currentColor.green) * (ratio - 0.5) / 0.5)
+  //         .round()
+  //         : 255;
+  //     int blueVal = _currentColor.blue != 255
+  //         ? (_currentColor.blue +
+  //         (255 - _currentColor.blue) * (ratio - 0.5) / 0.5)
+  //         .round()
+  //         : 255;
+  //     return Color.fromARGB(255, redVal, greenVal, blueVal);
+  //   } else if (ratio < 0.5) {
+  //     //Calculate new color (values converge to 0 to make the color darker)
+  //     int redVal = _currentColor.red != 0
+  //         ? (_currentColor.red * ratio / 0.5).round()
+  //         : 0;
+  //     int greenVal = _currentColor.green != 0
+  //         ? (_currentColor.green * ratio / 0.5).round()
+  //         : 0;
+  //     int blueVal = _currentColor.blue != 0
+  //         ? (_currentColor.blue * ratio / 0.5).round()
+  //         : 0;
+  //     return Color.fromARGB(255, redVal, greenVal, blueVal);
+  //   } else {
+  //     //return the base color
+  //     return _currentColor;
+  //   }
+  // }
+  //
+  // Color _calculateSelectedColor(double position) {
+  //   //determine color
+  //   double positionInColorArray =
+  //   (position / widget.width * (_colors.length - 1));
+  //   print(positionInColorArray);
+  //   int index = positionInColorArray.truncate();
+  //   int redValue;
+  //   int greenValue;
+  //   int blueValue;
+  //   print(index);
+  //   double remainder = positionInColorArray - index;
+  //   if (remainder == 0.0) {
+  //     _currentColor = _colors[index];
+  //   } else {
+  //     //calculate new color
+  //     redValue = _colors[index].red == _colors[index + 1].red
+  //         ? _colors[index].red
+  //         : (_colors[index].red +
+  //         (_colors[index + 1].red - _colors[index].red) * remainder)
+  //         .round();
+  //     greenValue = _colors[index].green == _colors[index + 1].green
+  //         ? _colors[index].green
+  //         : (_colors[index].green +
+  //         (_colors[index + 1].green - _colors[index].green) * remainder)
+  //         .round();
+  //     blueValue = _colors[index].blue == _colors[index + 1].blue
+  //         ? _colors[index].blue
+  //         : (_colors[index].blue +
+  //         (_colors[index + 1].blue - _colors[index].blue) * remainder)
+  //         .round();
+  //     _currentColor = Color.fromARGB(255, redValue, greenValue, blueValue);
+  //   }
+  //   return _currentColor;
+  // }
 
-  _shadeChangeHandler(double position) {
-    //handle out of bounds gestures
-    if (position > widget.width) {
-      setState(() {
-        position = widget.width;
-      });
-    };
-    if (position < 0) {
-
-      setState(() {
-        position = 0;
-      });
-    }
-    setState(() {
-      _shadeSliderPosition = position;
-      _shadedColor = _calculateShadedColor(_shadeSliderPosition);
-      if(_shadedColor.red==255 && _shadedColor.green==255 && _shadedColor.blue==255){
-        setState(() {
-          color_controller.text="white";
-        });
-      }else if(_shadedColor.red==0 && _shadedColor.green==0 && _shadedColor.blue==0){
-        setState(() {
-          color_controller.text="black";
-        });
-      }else if(_shadedColor.red == _shadedColor.green && _shadedColor.green==_shadedColor.blue && _shadedColor.red!=255 && _shadedColor.red!=0){
-        setState(() {
-          color_controller.text="grey";
-        });
-      }
-      print(
-          "r: ${_shadedColor.red}, g: ${_shadedColor.green}, b: ${_shadedColor.blue}");
-    });
-  }
-
-  Color _calculateShadedColor(double position) {
-    double ratio = position / widget.width;
-    if (ratio > 0.5) {
-      //Calculate new color (values converge to 255 to make the color lighter)
-      int redVal = _currentColor.red != 255
-          ? (_currentColor.red +
-          (255 - _currentColor.red) * (ratio - 0.5) / 0.5)
-          .round()
-          : 255;
-      int greenVal = _currentColor.green != 255
-          ? (_currentColor.green +
-          (255 - _currentColor.green) * (ratio - 0.5) / 0.5)
-          .round()
-          : 255;
-      int blueVal = _currentColor.blue != 255
-          ? (_currentColor.blue +
-          (255 - _currentColor.blue) * (ratio - 0.5) / 0.5)
-          .round()
-          : 255;
-      return Color.fromARGB(255, redVal, greenVal, blueVal);
-    } else if (ratio < 0.5) {
-      //Calculate new color (values converge to 0 to make the color darker)
-      int redVal = _currentColor.red != 0
-          ? (_currentColor.red * ratio / 0.5).round()
-          : 0;
-      int greenVal = _currentColor.green != 0
-          ? (_currentColor.green * ratio / 0.5).round()
-          : 0;
-      int blueVal = _currentColor.blue != 0
-          ? (_currentColor.blue * ratio / 0.5).round()
-          : 0;
-      return Color.fromARGB(255, redVal, greenVal, blueVal);
-    } else {
-      //return the base color
-      return _currentColor;
-    }
-  }
-
-  Color _calculateSelectedColor(double position) {
-    //determine color
-    double positionInColorArray =
-    (position / widget.width * (_colors.length - 1));
-    print(positionInColorArray);
-    int index = positionInColorArray.truncate();
-    int redValue;
-    int greenValue;
-    int blueValue;
-    print(index);
-    double remainder = positionInColorArray - index;
-    if (remainder == 0.0) {
-      _currentColor = _colors[index];
-    } else {
-      //calculate new color
-      redValue = _colors[index].red == _colors[index + 1].red
-          ? _colors[index].red
-          : (_colors[index].red +
-          (_colors[index + 1].red - _colors[index].red) * remainder)
-          .round();
-      greenValue = _colors[index].green == _colors[index + 1].green
-          ? _colors[index].green
-          : (_colors[index].green +
-          (_colors[index + 1].green - _colors[index].green) * remainder)
-          .round();
-      blueValue = _colors[index].blue == _colors[index + 1].blue
-          ? _colors[index].blue
-          : (_colors[index].blue +
-          (_colors[index + 1].blue - _colors[index].blue) * remainder)
-          .round();
-      _currentColor = Color.fromARGB(255, redValue, greenValue, blueValue);
-    }
-    return _currentColor;
-  }
+  void changeColor(Color color) => setState(() => currentColor = color);
 
   @override
   Widget build(BuildContext context) {
@@ -211,7 +219,7 @@ class _AddVariantsState extends State<AddVariants> {
                         ),
                       ),
                       onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=> AddSize()));
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> AddSize()));
                       },
                     ),
                   ],
@@ -238,65 +246,80 @@ class _AddVariantsState extends State<AddVariants> {
                 ),
                 SizedBox(height: 20,),
                 Center(
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onHorizontalDragStart: (DragStartDetails details) {
-                      print("_-------------------------STARTED DRAG");
-                      _colorChangeHandler(details.localPosition.dx);
-                    },
-                    onHorizontalDragUpdate: (DragUpdateDetails details) {
-                      _colorChangeHandler(details.localPosition.dx);
-                    },
-                    onTapDown: (TapDownDetails details) {
-                      _colorChangeHandler(details.localPosition.dx);
-                    },
-                    //This outside padding makes it much easier to grab the   slider because the gesture detector has
-                    // the extra padding to recognize gestures inside of
+                  child: InkWell(
                     child: Container(
-                      width: widget.width,
-                      height: 18,
+                      padding: EdgeInsets.all(10),
+                      child: Text('Select Color ', style: TextStyle(color: Colors.purpleAccent, fontSize: 17, fontWeight: FontWeight.bold),),
                       decoration: BoxDecoration(
-                        border: Border.all(width: 2, color: Colors.grey[800]),
-                        borderRadius: BorderRadius.circular(15),
-                        gradient: LinearGradient(colors: _colors),
-                      ),
-                      child: CustomPaint(
-                        painter: _SliderIndicatorPainter(_colorSliderPosition),
+                        border:Border.all(color: Colors.purpleAccent),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
+                    onTap: (){
+                      _showdialog(context);
+                    },
                   ),
                 ),
-                SizedBox(height: 40,),
-                Center(
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onHorizontalDragStart: (DragStartDetails details) {
-                      print("_-------------------------STARTED DRAG");
-                      _shadeChangeHandler(details.localPosition.dx);
-                    },
-                    onHorizontalDragUpdate: (DragUpdateDetails details) {
-                      _shadeChangeHandler(details.localPosition.dx);
-                    },
-                    onTapDown: (TapDownDetails details) {
-                      _shadeChangeHandler(details.localPosition.dx);
-                    },
-                    //This outside padding makes it much easier to grab the slider because the gesture detector has
-                    // the extra padding to recognize gestures inside of
-                    child: Container(
-                      width: widget.width,
-                      height: 18,
-                      decoration: BoxDecoration(
-                        border: Border.all(width: 2, color: Colors.grey[800]),
-                        borderRadius: BorderRadius.circular(15),
-                        gradient: LinearGradient(
-                            colors: [Colors.black, _currentColor, Colors.white]),
-                      ),
-                      child: CustomPaint(
-                        painter: _SliderIndicatorPainter(_shadeSliderPosition),
-                      ),
-                    ),
-                  ),
-                ),
+                // Center(
+                //   child: GestureDetector(
+                //     behavior: HitTestBehavior.opaque,
+                //     onHorizontalDragStart: (DragStartDetails details) {
+                //       print("_-------------------------STARTED DRAG");
+                //       _colorChangeHandler(details.localPosition.dx);
+                //     },
+                //     onHorizontalDragUpdate: (DragUpdateDetails details) {
+                //       _colorChangeHandler(details.localPosition.dx);
+                //     },
+                //     onTapDown: (TapDownDetails details) {
+                //       _colorChangeHandler(details.localPosition.dx);
+                //     },
+                //     //This outside padding makes it much easier to grab the   slider because the gesture detector has
+                //     // the extra padding to recognize gestures inside of
+                //     child: Container(
+                //       width: widget.width,
+                //       height: 18,
+                //       decoration: BoxDecoration(
+                //         border: Border.all(width: 2, color: Colors.grey[800]),
+                //         borderRadius: BorderRadius.circular(15),
+                //         gradient: LinearGradient(colors: _colors),
+                //       ),
+                //       child: CustomPaint(
+                //         painter: _SliderIndicatorPainter(_colorSliderPosition),
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                // SizedBox(height: 40,),
+                // Center(
+                //   child: GestureDetector(
+                //     behavior: HitTestBehavior.opaque,
+                //     onHorizontalDragStart: (DragStartDetails details) {
+                //       print("_-------------------------STARTED DRAG");
+                //       _shadeChangeHandler(details.localPosition.dx);
+                //     },
+                //     onHorizontalDragUpdate: (DragUpdateDetails details) {
+                //       _shadeChangeHandler(details.localPosition.dx);
+                //     },
+                //     onTapDown: (TapDownDetails details) {
+                //       _shadeChangeHandler(details.localPosition.dx);
+                //     },
+                //     //This outside padding makes it much easier to grab the slider because the gesture detector has
+                //     // the extra padding to recognize gestures inside of
+                //     child: Container(
+                //       width: widget.width,
+                //       height: 18,
+                //       decoration: BoxDecoration(
+                //         border: Border.all(width: 2, color: Colors.grey[800]),
+                //         borderRadius: BorderRadius.circular(15),
+                //         gradient: LinearGradient(
+                //             colors: [Colors.black, _currentColor, Colors.white]),
+                //       ),
+                //       child: CustomPaint(
+                //         painter: _SliderIndicatorPainter(_shadeSliderPosition),
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 SizedBox(height: 60,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -385,6 +408,7 @@ class _AddVariantsState extends State<AddVariants> {
                     child: Text('Submit', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
                     color: Colors.green.shade500,
                     onPressed: (){
+                      Navigator.pop(context);
                       Toast.show('loading...', context, gravity: Toast.BOTTOM, duration: Toast.LENGTH_SHORT);
                     },
                   ),
@@ -396,21 +420,69 @@ class _AddVariantsState extends State<AddVariants> {
       ),
     );
   }
+  _showdialog(BuildContext context){
+    showDialog(
+      context: context,
+      builder: (BuildContext context){
+        return AlertDialog(
+          title: const Text('Pick a color!'),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: pickerColor,
+              onColorChanged: changeColor,
+              showLabel: false,
+              pickerAreaHeightPercent: 0.8,
+            ),
+            // Use Material color picker:
+            //
+            // child: MaterialPicker(
+            //   pickerColor: pickerColor,
+            //   onColorChanged: changeColor,
+            //   showLabel: true, // only on portrait mode
+            // ),
+            //
+            // Use Block color picker:
+            //
+            // child: BlockPicker(
+            //   pickerColor: currentColor,
+            //   onColorChanged: changeColor,
+            // ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: const Text('Got it'),
+              onPressed: () {
+                setState(() {
+                  currentColor = pickerColor;
+                  r_value= currentColor.red;
+                  g_value= currentColor.green;
+                  b_value=currentColor.blue;
+                  print(b_value);
+                  color_controller.text=currentColor.toString();
+                });
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      }
+    );
+  }
 }
 
-class _SliderIndicatorPainter extends CustomPainter {
-  final double position;
-  _SliderIndicatorPainter(this.position);
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.drawCircle(
-        Offset(position, size.height / 2), 15, Paint()..color = Colors.black);
-  }
-  @override
-  bool shouldRepaint(_SliderIndicatorPainter old) {
-    return true;
-  }
-}
+// class _SliderIndicatorPainter extends CustomPainter {
+//   final double position;
+//   _SliderIndicatorPainter(this.position);
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     canvas.drawCircle(
+//         Offset(position, size.height / 2), 15, Paint()..color = Colors.black);
+//   }
+//   @override
+//   bool shouldRepaint(_SliderIndicatorPainter old) {
+//     return true;
+//   }
+// }
 
 class AddSize extends StatefulWidget {
   @override
@@ -437,13 +509,31 @@ class _AddSizeState extends State<AddSize> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Container(
-                  padding: EdgeInsets.all(10),
-                  child: Text('Add Size', style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold),),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.purpleAccent,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      child: Text('Add Size', style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.bold),),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.purpleAccent,
+                      ),
+                    ),
+                    InkWell(
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        child: Text('Color >> ', style: TextStyle(color: Colors.purpleAccent, fontSize: 17, fontWeight: FontWeight.bold),),
+                        decoration: BoxDecoration(
+                          border:Border.all(color: Colors.purpleAccent),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      onTap: (){
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> AddVariants(MediaQuery.of(context).size.width)));
+                      },
+                    ),
+                  ],
                 ),
                 SizedBox(height: 30),
                 Row(
@@ -573,6 +663,7 @@ class _AddSizeState extends State<AddSize> {
                     child: Text('Submit', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
                     color: Colors.green.shade500,
                     onPressed: (){
+                      Navigator.pop(context);
                       Toast.show('loading...', context, gravity: Toast.BOTTOM, duration: Toast.LENGTH_SHORT);
                     },
                   ),

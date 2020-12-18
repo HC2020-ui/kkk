@@ -14,45 +14,45 @@ class EmployeeList extends StatefulWidget {
 class _EmployeeListState extends State<EmployeeList> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: StreamBuilder<QuerySnapshot>(
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0.0,
+        title:     Container(
+          padding: EdgeInsets.only(top: 7.0, bottom: 7.0, left: 10.0, right: 10.0),
+          height: 45.0,
+          width: 300.0,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Color.fromRGBO(93, 187, 99, 1),
+          ),
+          child: Align(
+              alignment: Alignment.center,
+              child: Text("Employees", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),)),
+          // child: Row(
+          //   children: <Widget>[
+          //     // Text("LOGO", style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),),
+          //     // Spacer(flex: 2,),
+          //
+          //   ],
+          // ),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Image.asset(
+            "images/logo_app.png",
+          ),
+        ),
+      ),
+      body: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance.collection('employee').snapshots(),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
             // count of events
             final int eventCount = snapshot.data.docs.length??0;
-            if (eventCount==0 || snapshot.hasError) {
-              return Scaffold(
-                appBar: AppBar(
-                  elevation: 0.0,
-                  title: Container(
-                    padding: EdgeInsets.only(top: 7.0, bottom: 7.0, left: 10.0, right: 10.0),
-                    height: 45.0,
-                    width: 345.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Color.fromRGBO(255, 117, 117, 1),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Text("LOGO", style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),),
-                        Spacer(flex: 2,),
-                        Align(
-                            alignment: Alignment.center,
-                            child: Text("Add Employee", style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),)),
-                        Spacer(flex: 3,),
-                      ],
-                    ),
-                  ),
-                  centerTitle: true,
-                  backgroundColor: Colors.white,
-                  leading: InkWell(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Icon(Icons.arrow_back, size: 24.0, color: Colors.black),
-                  ),
-                ),
-                body: SafeArea(
+            if (eventCount==0 || snapshot.hasError || snapshot.data.docs==null) {
+              return Container(
+                child: SafeArea(
                   child: Container(
                     margin: EdgeInsets.fromLTRB(5, 12, 5, 20),
                     child: ListView.builder(
@@ -87,63 +87,28 @@ class _EmployeeListState extends State<EmployeeList> {
               case ConnectionState.none:
                 return Center(child: CircularProgressIndicator());
               default:
-                return Scaffold(
-                  appBar: AppBar(
-                    elevation: 0.0,
-                    title: Container(
-                      padding: EdgeInsets.only(top: 7.0, bottom: 7.0, left: 10.0, right: 10.0),
-                      height: 45.0,
-                      width: 345.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Color.fromRGBO(255, 117, 117, 1),
-                      ),
-                      child: Row(
-                        children: <Widget>[
-                          Text("LOGO", style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),),
-                          Spacer(flex: 2,),
-                          Align(
-                              alignment: Alignment.center,
-                              child: Text("Add Employee", style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),)),
-                          Spacer(flex: 3,),
-                        ],
-                      ),
-                    ),
-                    actions: [
-                      // IconButton(
-                      //   icon: Icon(Icons.sort),
-                      //   color: Colors.black26,
-                      //   onPressed: (){
-                      //     Navigator.push(context, MaterialPageRoute(builder: (context)=>BPList()));
-                      //   },
-                      // )
-                    ],
-                    centerTitle: true,
-                    backgroundColor: Colors.white,
-                    leading: InkWell(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Icon(Icons.arrow_back, size: 24.0, color: Colors.black),
-                    ),
-                  ),
-                  body: new ListView.builder(
+                return Container(
+                  child: new ListView.builder(
                       itemCount: eventCount ,
                       itemBuilder: (context, index) {
                         final DocumentSnapshot data = snapshot.data.docs[index];
                         return InkWell(
                           child: Container(
-                            margin: EdgeInsets.fromLTRB(5, 10, 5, 10),
+                            margin: EdgeInsets.fromLTRB(10, 5, 5, 10),
                             height: 150,
                             child: new Card(
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(color: Colors.white70, width: 1.5
+                                ),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Container(
                                     child: Image(
-                                      image: NetworkImage('https://www.grocapitus.com/wp-content/uploads/placeholder-profile-male-500x500.png'),
-                                      height: 100,
-                                      width: 100,
+                                      image: NetworkImage('https://www.pngitem.com/pimgs/m/368-3682752_transparent-worker-clipart-cartoon-employee-png-png-download.png'),
+
                                       fit: BoxFit.contain,
                                     ),
                                     padding: EdgeInsets.all(10),
@@ -161,7 +126,7 @@ class _EmployeeListState extends State<EmployeeList> {
                                 ],
                               ),
                               elevation: 5.0,
-                              color: Colors.white,
+                              color: Colors.grey.shade100,
                             ),
                           ),
                           onTap: (){
@@ -196,15 +161,16 @@ class _EmployeeListState extends State<EmployeeList> {
                         // );
                       }
                   ),
-                  floatingActionButton: new FloatingActionButton(
-                    child: Icon(Icons.add),
-                    onPressed: (){
-                      _showdialogbox();
-                    },
-                  ),
                 );
             }
           }),
+      floatingActionButton: new FloatingActionButton(
+        backgroundColor: Color.fromRGBO(93, 187, 99, 1),
+        child: Icon(Icons.add),
+        onPressed: (){
+          _showdialogbox();
+        },
+      ),
     );
   }
 

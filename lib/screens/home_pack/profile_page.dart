@@ -1,7 +1,12 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:toast/toast.dart';
 import 'package:winkl/config/theme.dart';
+import 'package:winkl/dialog_box.dart';
+import 'package:winkl/screens/store/gps.dart';
 
 class ProfilePage extends StatefulWidget {
   String name;
@@ -16,6 +21,39 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+
+  String uid;
+  TextEditingController dialog_controller=new TextEditingController();
+  String lat;
+  String long;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getcoordinates();
+    // getid();
+  }
+
+  getcoordinates() async{
+    await FirebaseFirestore.instance.collection('stores').doc(uid)
+        .get().then((DocumentSnapshot data) {
+      setState(() {
+        lat= data.get('latitude');
+        long= data.get('longitude');
+      });
+    });
+    print(lat);
+    print(long);
+  }
+
+  getid() async{
+    var firebaseuser= await FirebaseAuth.instance.currentUser;
+    setState(() {
+      uid=firebaseuser.uid;
+    });
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,7 +140,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       Text(widget.name!=null ?widget.name:'No value', style: TextStyle(color: Colors.black),),
                       SizedBox(width: 10,),
-                      Text('Edit', style: TextStyle(color: Colors.blue,fontWeight: FontWeight.bold),),
+                      InkWell(child: Text('Edit', style: TextStyle(color: Colors.blue,fontWeight: FontWeight.bold),),
+                      onTap: (){
+                        _showdialog('Name');
+                      },
+                      ),
                     ],
                   ),
                 ),
@@ -139,7 +181,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     Text(widget.phone!=null?widget.email:'No value', style: TextStyle(color: Colors.black),),
                     SizedBox(width: 10,),
-                    Text('Edit', style: TextStyle(color: Colors.blue,fontWeight: FontWeight.bold),),
+                    InkWell(child: Text('Edit', style: TextStyle(color: Colors.blue,fontWeight: FontWeight.bold),),
+                    onTap: (){
+                      _showdialog('Email');
+                    },
+                    ),
                   ],
                 ),
               ],
@@ -157,9 +203,13 @@ class _ProfilePageState extends State<ProfilePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        width:230,
+                        width:220,
                           child: SingleChildScrollView(child: Text(widget.location!=null?widget.location:'No value', style: TextStyle(color: Colors.black),))),
-                      Text('Edit', style: TextStyle(color: Colors.blue,fontWeight: FontWeight.bold),),
+                      InkWell(child: Text('Show', style: TextStyle(color: Colors.blue,fontWeight: FontWeight.bold),),
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> Gps(latitude: double.parse(lat),longitude: double.parse(long),)));
+                      },
+                      ),
                     ],
                   ),
                 ],
@@ -184,6 +234,52 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
       ),
+    );
+  }
+
+  _showdialog(String content) async{
+    return showDialog(
+        context: context,
+        builder: (context) => new AlertDialog(
+      title: new Text('Change Here'),
+      content: TextField(
+        controller: dialog_controller,
+        decoration: InputDecoration(
+          hintText: 'Enter the new ${content}',
+          hintStyle: TextStyle(
+            color: Colors.purple,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+      ),
+      actions: <Widget>[
+        new FlatButton(
+          onPressed: () {
+            if(content.toLowerCase()=='name') {
+              FirebaseFirestore.instance.collection('stores').doc(uid).update({
+                'establishment_name': dialog_controller.text
+              }).then((value) {
+                Toast.show('${content} got updated', context);
+              });
+            }else if(content.toLowerCase()=='email'){
+              FirebaseFirestore.instance.collection('stores').doc(uid).update({
+                'email': dialog_controller.text
+              }).then((value) {
+                Toast.show('${content} got updated', context);
+              });
+            }
+          },
+          child: new Text('Change'),
+        ),
+        new FlatButton(
+          onPressed: () {
+            Navigator.of(context, rootNavigator: true)
+                .pop(); // dismisses only the dialog and returns nothing
+          },
+          child: new Text('Discard'),
+        ),
+      ],
+    ),
     );
   }
 }

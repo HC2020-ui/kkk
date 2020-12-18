@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.ACCESS_INTERNET"/>
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="winkl"
+        android:label="Nukkd Stores"
         android:icon="@mipmap/ic_launcher">
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCy6I1SleZ42NlSTDVDoKx1S6r4_vEeMNw"/>

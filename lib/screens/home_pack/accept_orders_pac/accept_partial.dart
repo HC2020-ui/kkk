@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:winkl/config/theme.dart';
 import 'package:winkl/screens/home_pack/accept_orders_pac/accept.dart';
 import 'package:winkl/screens/home_pack/home.dart';
+import 'package:winkl/screens/home_pack/newHomePage.dart';
 
 class AcceptPartial extends StatefulWidget {
 
@@ -13,7 +14,8 @@ class AcceptPartial extends StatefulWidget {
   String c_address;
   String number;
   int n;
-  AcceptPartial({this.order,this.c_name,this.c_address,this.n, this.number});
+  String storename;
+  AcceptPartial({this.order,this.c_name,this.c_address,this.n, this.number,this.storename});
 
   @override
   _AcceptPartialState createState() => _AcceptPartialState();
@@ -25,100 +27,57 @@ class _AcceptPartialState extends State<AcceptPartial> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('products').snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          final int Itemcount = snapshot.data.docs.length ?? 0;
-          if (snapshot.data == null) {
-            return Scaffold(body: Center(child: CircularProgressIndicator()));
-          }
-          else if (Itemcount == 0 || snapshot.hasError) {
-            return Scaffold(
-              appBar: AppBar(
-                backgroundColor: Colors.white,
-                elevation: 0.0,
-                title: Container(
-                  padding: EdgeInsets.only(
-                      top: 7.0, bottom: 7.0, left: 10.0, right: 10.0),
-                  height: 45.0,
-                  width: 345.0,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Color.fromRGBO(255, 117, 117, 1),
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Text("LOGO", style: TextStyle(color: AppColors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold),),
-                      Spacer(flex: 2),
-                      Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            "Store Name", style: TextStyle(color: AppColors
-                              .white, fontSize: 16, fontWeight: FontWeight
-                              .bold),)),
-                      Spacer(flex: 3,),
-                    ],
-                  ),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0.0,
+        title: Container(
+          padding: EdgeInsets.only(top: 7.0,
+              bottom: 7.0,
+              left: 10.0,
+              right: 10.0),
+          height: 45.0,
+          width: 345.0,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Color.fromRGBO(93, 187, 99, 1),
+          ),
+          child: Align(
+              alignment: Alignment.center,
+              child: Text(widget.storename==null?"Store Name":widget.storename,
+                style: TextStyle(color: AppColors
+                    .white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold),)),
+        ),
+        centerTitle: true,
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Image.asset(
+            "images/logo_app.png",
+          ),
+        ),
+      ),
+      body: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('products').snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            final int Itemcount = snapshot.data.docs.length ?? 0;
+            if (snapshot.data == null) {
+              return Container(child: Center(child: CircularProgressIndicator()));
+            }
+            else if (Itemcount == 0 || snapshot.hasError) {
+              return Container(
+                child: Center(
+                  child: Text('No Item'),
                 ),
-                centerTitle: true,
-                leading: InkWell(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Icon(
-                      Icons.arrow_back, size: 24, color: Colors.black,)
-                ),
-              ),
-              body: Center(
-                child: Text('No Item'),
-              ),
-            );
-          }
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-              return Scaffold(
-                  body: Center(child: CircularProgressIndicator()));
-            default:
-              return Scaffold(
-                appBar: AppBar(
-                  elevation: 0.0,
-                  title: Container(
-                    padding: EdgeInsets.only(
-                        top: 7.0, bottom: 7.0, left: 10.0, right: 10.0),
-                    height: 45.0,
-                    width: 345.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Color.fromRGBO(255, 117, 117, 1),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Text("LOGO", style: TextStyle(color: AppColors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),),
-                        Spacer(flex: 2,),
-                        Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              "Store Name", style: TextStyle(color: AppColors
-                                .white, fontSize: 16, fontWeight: FontWeight
-                                .bold),)),
-                        Spacer(flex: 3,),
-                      ],
-                    ),
-                  ),
-                  centerTitle: true,
-                  backgroundColor: Colors.white,
-                  leading: InkWell(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Icon(
-                        Icons.arrow_back, size: 24.0, color: Colors.black,)),
-                ),
-                body: Container(
+              );
+            }
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                return Container(
+                    child: Center(child: CircularProgressIndicator()));
+              default:
+                return Container(
                   color: Colors.white,
                   padding: EdgeInsets.only(
                       top: 10.0, bottom: 10.0, left: 18.0, right: 18.0),
@@ -300,10 +259,10 @@ class _AcceptPartialState extends State<AcceptPartial> {
                       Spacer(flex: 20,),
                     ],
                   ),
-                ),
-              );
+                );
+            }
           }
-        }
+      ),
     );
   }
 
@@ -312,7 +271,7 @@ class _AcceptPartialState extends State<AcceptPartial> {
       child: InkWell(
         onTap: (){
           if(title=="Reject"){
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>Home()), (route) => false);
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>NewHomePage()), (route) => false);
           }else if(title=="Accept"){
             Navigator.push(context, MaterialPageRoute(builder: (context)=>AcceptScreen()));
           }

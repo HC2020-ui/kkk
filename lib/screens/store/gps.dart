@@ -8,6 +8,9 @@ import 'package:winkl/config/theme.dart';
 import 'package:winkl/loading.dart';
 
 class Gps extends StatefulWidget {
+  double latitude;
+  double longitude;
+  Gps({this.latitude, this.longitude});
   @override
   _GpsState createState() => _GpsState();
 }
@@ -40,9 +43,9 @@ class _GpsState extends State<Gps> {
   getcurrentposition() async {
     pinLocationIcon = await BitmapDescriptor.fromAssetImage(
         ImageConfiguration(devicePixelRatio: 2.5), 'images/destination.png');
-    Position position = await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    latitude = position.latitude;
-    longitude = position.longitude;
+    // Position position = await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    latitude = widget.latitude;
+    longitude = widget.longitude;
 
     final placemark = await placemarkFromCoordinates(latitude, longitude);
 

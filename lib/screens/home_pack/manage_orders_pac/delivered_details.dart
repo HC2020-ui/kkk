@@ -13,7 +13,8 @@ class DeliveredDetails extends StatefulWidget {
   String c_name;
   String c_address;
   String event;
-  DeliveredDetails({this.c_name,this.c_address,this.order,this.event});
+  String store_name;
+  DeliveredDetails({this.c_name,this.c_address,this.order,this.event, this.store_name});
 
   @override
   _DeliveredDetailsState createState() => _DeliveredDetailsState();
@@ -24,33 +25,34 @@ class _DeliveredDetailsState extends State<DeliveredDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         elevation: 0.0,
-        title: Container(
+        title:     Container(
           padding: EdgeInsets.only(top: 7.0, bottom: 7.0, left: 10.0, right: 10.0),
           height: 45.0,
-          width: 345.0,
+          width: 300.0,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            color: Color.fromRGBO(255, 117, 117, 1),
+            color: Color.fromRGBO(93, 187, 99, 1),
           ),
-          child: Row(
-            children: <Widget>[
-              Text("LOGO", style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),),
-              Spacer(flex: 2,),
-              Align(
-                  alignment: Alignment.center,
-                  child: Text("Store Name", style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),)),
-              Spacer(flex: 3,),
-            ],
-          ),
+          child: Align(
+              alignment: Alignment.center,
+              child: Text(widget.store_name!=null?widget.store_name:"Store Name", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),)),
+          // child: Row(
+          //   children: <Widget>[
+          //     // Text("LOGO", style: TextStyle(color: AppColors.white, fontSize: 16, fontWeight: FontWeight.bold),),
+          //     // Spacer(flex: 2,),
+          //
+          //   ],
+          // ),
         ),
         centerTitle: true,
-        leading: InkWell(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: Icon(Icons.arrow_back, size: 24, color: Colors.black,)),
+        backgroundColor: Colors.white,
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Image.asset(
+            "images/logo_app.png",
+          ),
+        ),
       ),
       body: SafeArea(
         child: Center(
@@ -257,7 +259,7 @@ class _DeliveredDetailsState extends State<DeliveredDetails> {
                 Spacer(flex: 5,),
                 Align(
                   alignment: Alignment.centerLeft,
-                    child: Text("Total Bill Amount : Rs. XXXX/-", style: Font_Style().montserrat_Bold(null, 16),)),
+                    child: Text("Total Bill Amount : Rs. XXXX/-", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16))),
                 Spacer(flex: 20,),
                 GestureDetector(
                   onTap: (){
@@ -270,12 +272,12 @@ class _DeliveredDetailsState extends State<DeliveredDetails> {
                   child: Container(
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
-                        color: Colors.orange, borderRadius: BorderRadius.circular(10)),
-                    height: 48.h,
+                        color: Colors.green.shade700, borderRadius: BorderRadius.circular(10)),
+                    height: 48,
                     child: Center(
                       child: Text(
                           "Order Complete",
-                          style: Font_Style().montserrat_Bold(Colors.white, 19)
+                          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 19, color: Colors.white)
                       ),
                     ),
                   ),

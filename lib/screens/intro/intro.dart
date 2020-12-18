@@ -41,16 +41,12 @@ class _IntroScreenState extends State<IntroScreen> {
         pages: [
           PageViewModel(
             title: "Become Vendor On Winkl",
-            body:
-            "Some Description Text.",
-            image: _buildImage('img1'),
+            bodyWidget: Center(child: CircularProgressIndicator(),),
             decoration: pageDecoration,
           ),
           PageViewModel(
             title: "Receive Orders from Customers ",
-            body:
-            "Some Description Text",
-            image: _buildImage('img2'),
+            bodyWidget: Center(child: CircularProgressIndicator(),),
             decoration: pageDecoration,
           ),
         ],

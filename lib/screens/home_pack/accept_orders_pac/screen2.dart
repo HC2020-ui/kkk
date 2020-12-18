@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:winkl/screens/home_pack/accept_orders_pac/screen3.dart';
 import 'package:winkl/screens/home_pack/accept_orders_pac/screen4.dart';
 import 'package:winkl/screens/home_pack/home.dart';
+import 'package:winkl/screens/home_pack/newHomePage.dart';
 
 import '../../../appBar.dart';
 
@@ -138,7 +139,7 @@ class SecondScreen extends StatelessWidget {
                 ),
               );
             } else {
-              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>Home()), (route) => false);
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>NewHomePage()), (route) => false);
             }
           },
         ),

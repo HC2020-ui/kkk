@@ -7,10 +7,9 @@ import 'package:toast/toast.dart';
 import 'package:winkl/screens/home_pack/home.dart';
 import 'package:winkl/services_screens/services_main.dart';
 
-class NewHomeScreen extends StatefulWidget {
+import 'newHomePage.dart';
 
-  String store_name;
-  NewHomeScreen({this.store_name});
+class NewHomeScreen extends StatefulWidget {
 
   @override
   _NewHomeScreenState createState() => _NewHomeScreenState();
@@ -21,6 +20,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
   FirebaseAuth _auth = FirebaseAuth.instance;
   String storeType;
   String name;
+  String store_name;
 
   @override
   void initState() {
@@ -42,6 +42,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
       setState(() {
         storeType = data.get('store_type').toString().toLowerCase();
         name = data.get('proprietor_name').toString();
+        store_name=data.get('establishment_name').toString();
       });
     }).catchError((e) {
       print(e);
@@ -56,7 +57,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Container(
-            height: MediaQuery.of(context).size.height+50,
+            height: MediaQuery.of(context).size.height*1.07,
             margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
             decoration: BoxDecoration(
               color: Colors.white70,
@@ -88,7 +89,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                       ),
                       SizedBox(width: 20,),
                       Container(
-                        padding: const EdgeInsets.all(5.0),
+                        padding: const EdgeInsets.fromLTRB(5,5,0,5),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -97,14 +98,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                               onPressed: () {
                                 if (uid != null) {
                                   if (storeType != null) {
-                                    if (storeType == 'services') {
-                                      Navigator.push(context, MaterialPageRoute(
-                                          builder: (context) => Home(id: uid,
-                                            store_type: storeType,)));
-                                    } else {
-                                      Navigator.push(context, MaterialPageRoute(
-                                          builder: (context) => Home()));
-                                    }
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>NewHomePage(store_type: storeType,)));
                                   } else {
                                     Toast.show('Store Type data is null', context,
                                         duration: Toast.LENGTH_SHORT,
@@ -122,6 +116,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                                   color: Colors.lightBlueAccent),
                               onPressed: null,
                             ),
+                            SizedBox(width: 10,),
                             CircleAvatar(
                                 backgroundImage: NetworkImage(
                                     'https://images-na.ssl-images-amazon.com/images/I/91ldxI0EEnL._SL1500_.jpg')
@@ -144,43 +139,36 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                     margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     height: 85,
-                    child: GestureDetector(
-                      onTap: () {
-                        Toast.show('Coming Soon...', context,
-                            duration: Toast.LENGTH_SHORT,
-                            gravity: Toast.CENTER);
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(right: 0, top: 0),
-                        child: Stack(
-                          children: <Widget>[
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(5),
-                              child: CachedNetworkImage(
-                                imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS7nTXTue92M7ViJqRt-qvanji6UTwss9GK2A&usqp=CAU',
-                                height: 120,
-                                width: 240,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            Container(
-                              alignment: Alignment.center,
+                    child: Container(
+                      margin: EdgeInsets.only(right: 0, top: 0),
+                      child: Stack(
+                        children: <Widget>[
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(5),
+                            child: CachedNetworkImage(
+                              imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS7nTXTue92M7ViJqRt-qvanji6UTwss9GK2A&usqp=CAU',
                               height: 120,
-                              width: 280,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: Colors.black26),
-                              child: Text(
-                                widget.store_name,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500),
-                              ),
+                              width: 240,
+                              fit: BoxFit.cover,
                             ),
-                          ],
-                        ),
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                            height: 120,
+                            width: 280,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Colors.black26),
+                            child: Text(
+                              store_name??"loading...",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
