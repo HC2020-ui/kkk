@@ -5,7 +5,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:strings/strings.dart';
-import 'package:winkl/screens/store/add_product.dart';
+import 'package:winkl/screens/home_pack/add_product.dart';
 
 class ProductSearch extends StatefulWidget {
   @override

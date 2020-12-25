@@ -20,7 +20,7 @@ import 'package:winkl/screens/home_pack/newHomeScreen.dart';
 import 'package:winkl/screens/home_pack/profile_page.dart';
 import 'package:winkl/screens/otp_screens/verify_otp.dart';
 import 'package:winkl/screens/store/add_brands.dart';
-import 'package:winkl/screens/store/add_product.dart';
+import 'package:winkl/screens/home_pack/add_product.dart';
 import 'package:winkl/screens/store/add_variants.dart';
 import 'package:winkl/screens/store/brands/add_service.dart';
 import 'package:winkl/screens/store/khata_screen.dart';
@@ -65,7 +65,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
+  
   DarkThemeProvider themeChangeProvider= new DarkThemeProvider();
 
   @override
@@ -82,9 +82,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) {
-        return themeChangeProvider;
       },
       child: Consumer<DarkThemeProvider>(
           builder: (BuildContext context, value, Widget child) {

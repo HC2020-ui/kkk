@@ -36,6 +36,9 @@ class AddBrands extends StatefulWidget {
 
 bool checkedValue = true;
 int selectedRadoButton = 1;
+FirebaseStorage _storage = FirebaseStorage(storageBucket: 'gs://wnkl-f55a7.appspot.com');
+StorageUploadTask _uploadTask;
+i.File _imageFile;
 
 class _AddBrandsState extends State<AddBrands> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -103,6 +106,26 @@ class _AddBrandsState extends State<AddBrands> {
     }else{
       setState(() {
         vendorId='P/${state_codes[capitalize(widget.state.toLowerCase())]}/${now.year}/${now.month}/${len_docs+1}';
+      });
+    }
+  }
+  
+  Future<void>pickimage(ImageSource source)async{
+    i.File selected = await ImagePicker.pickImage(source: source);
+    if(selected!=null){
+      i.File cropped = await ImageCropper.cropImage(
+        sourcePath: selected.path,
+        compressQuality: 100,
+        compressFormat: ImageCompressFormat.jpg,
+        androidUiSettings: AndroidUiSettings(
+          toolbarColor: Colors.purple,
+          toolbarTitle: "CROP",
+          statusBarColor: Colors.blueGrey,
+          backgroundColor: Colors.white,
+        )
+      );
+      setState(() {
+        _imageFile = cropped;
       });
     }
   }

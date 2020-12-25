@@ -20,7 +20,10 @@ import 'package:winkl/dialog_box.dart';
 import 'package:winkl/main.dart';
 import 'package:winkl/screens/store/add_variants.dart';
 import 'package:winkl/screens/store/product_search.dart';
+import 'dart:io'as i;
 
+i.File _imageFile;
+i.File image;
 class AddProduct extends StatefulWidget {
   String event;
   String documentid;
@@ -42,35 +45,17 @@ class _AddProductState extends State<AddProduct> {
   TextEditingController discount_controller= TextEditingController();
   TextEditingController finalPrice_controller= TextEditingController();
   var uuid = Uuid();
-  String imageUrl="https://www.essentiallysports.com/wp-content/uploads/IMG_20191230_233458.jpg";
+  String imageUrl;
   String name;
   String mrp;
   String Sellingprice;
   String offer;
   String details;
-  String _imageUrl= "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png";
+  String _imageUrl;
 
 
   String cat_val = "Choose Category";
   String brand_name="";
-  // List<String> catlist = [
-  //   'Choose Category',
-  //   'Category 1',
-  //   'Category 2',
-  //   'Category 3',
-  //   'Category 4',
-  //   'Category 5',
-  // ];
-  //
-  // String unit_val = "piece";
-  // List<String> unitsList = [
-  //   "piece",
-  //   "kg",
-  //   "gm",
-  //   "litre",
-  //   "ml",
-  //   "dozen"
-  // ];
 
   String instock="Instock";
   List<String> instocklist = [
@@ -78,7 +63,6 @@ class _AddProductState extends State<AddProduct> {
     'yes',
     'no'
   ];
-
   updatecategory(String cat){
     setState(() {
       cat_controller.text=cat;
@@ -93,9 +77,6 @@ class _AddProductState extends State<AddProduct> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
         title: Container(
@@ -148,10 +129,17 @@ class _AddProductState extends State<AddProduct> {
                         child: Column(
                           children: [
                             Center(
-                              child: Image.network('https://tekrabuilders.com/wp-content/uploads/2018/12/male-placeholder-image.jpeg',
-                              height: 100,
-                                width: 100,
-                                fit: BoxFit.contain,
+                              child: GestureDetector(
+                                child: Image.network('https://tekrabuilders.com/wp-content/uploads/2018/12/male-placeholder-image.jpeg',
+                                height: 100,
+                                  width: 100,
+                                  fit: BoxFit.contain,
+                                ),
+                                onTap: (){
+                                  print("Photo");
+                                  // pickimage(ImageSource.gallery);
+                                  _showMyDialog(context);
+                                },
                               )
                             ),
                           ],
@@ -377,32 +365,32 @@ class _AddProductState extends State<AddProduct> {
     );
   }
 
-  Widget getProfileImageWidget(BuildContext context) {
-    return Container(
-      height: 100,
-      width: 100,
-      decoration:
-      BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(20))),
-      child: GestureDetector(
-//
-        onTap: () {
-          _showMyDialog(context);
-        },
-        child: ClipRRect(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-          child: FadeInImage.assetNetwork(
-              placeholder: "images/placeholder.png",
-              image: _imageUrl,
-              height: 300,
-              width: 300,
-              fit: BoxFit.cover
-          ),
+//   Widget getProfileImageWidget(BuildContext context) {
+//     return Container(
+//       height: 100,
+//       width: 100,
+//       decoration:
+//       BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(20))),
+//       child: GestureDetector(
+// //
+//         onTap: () {
+//           _showMyDialog(context);
+//         },
+//         child: ClipRRect(
+//           borderRadius: BorderRadius.all(Radius.circular(10)),
+//           child: FadeInImage.assetNetwork(
+//               placeholder: "images/placeholder.png",
+//               image: _imageUrl,
+//               height: 300,
+//               width: 300,
+//               fit: BoxFit.cover
+//           ),
 
-        ),
-      ),
+//         ),
+//       ),
 
-    );
-  }
+//     );
+//   }
 
 
   Future<void> _showMyDialog(BuildContext context) async {
@@ -429,7 +417,7 @@ class _AddProductState extends State<AddProduct> {
                     ),
                     onPressed: () {
                       Navigator.pop(context);
-                      getImage(ImageSource.camera);
+                      pickimage(ImageSource.camera);
                     },
                   ),
                   Text(
@@ -451,8 +439,8 @@ class _AddProductState extends State<AddProduct> {
                       color: AppColors.white,
                     ),
                     onPressed: () {
-                      Navigator.pop(context);
-                      getImage(ImageSource.gallery);
+                      // Navigator.pop(context);
+                      pickimage(ImageSource.gallery);
                     },
                   ),
                   Text(
@@ -472,80 +460,95 @@ class _AddProductState extends State<AddProduct> {
     );
   }
 
-  Future getImage(ImageSource source) async {
+  Future<void>pickimage(ImageSource source)async{
+    
+    i.File selected = await ImagePicker.pickImage(source: source);
+    if(selected!=null){
+      i.File cropped = await ImageCropper.cropImage(
+        sourcePath: selected.path,
+        compressQuality: 100,
+        compressFormat: ImageCompressFormat.jpg,
+        androidUiSettings: AndroidUiSettings(
+          toolbarColor: Colors.purple,
+          toolbarTitle: "CROP",
+          statusBarColor: Colors.blueGrey,
+          backgroundColor: Colors.white,
+        )
+      );
+      setState(() {
+        _imageFile = cropped;
+         image=i.File(_imageFile.path);
+      });
+    }
+  }
+  
+
+  addtoDatabase() async {
     String uniqueId = uuid.v1();
     String url;
     FirebaseStorage storage = FirebaseStorage.instance;
+    setState(() async{
+      StorageReference reference =
+      storage.ref().child("profileImages/${uniqueId}");
 
-    File image;
-    try {
-      //Get the file from the image picker and store it
-      var img = await ImagePicker().getImage(source: source);
+      //Upload the file to firebase
+      StorageUploadTask uploadTask = reference.putFile(image);
 
-      setState(() {
-        image=File(img.path);
-      });
+      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
 
-    } on PlatformException catch (e) {
-      //PlatformException is thrown with code : this happen when user back with don't
-      //selected image or not approve permission so stop method here
-      // check e.code to know what type is happen
-      return;
-    }
+      // Waits till the file is uploaded then stores the download url
+      url = await taskSnapshot.ref.getDownloadURL();
 
-    //Create a reference to the location you want to upload to in firebase
-    StorageReference reference =
-    storage.ref().child("profileImages/${uniqueId}");
+      print(url);
 
-    //Upload the file to firebase
-    StorageUploadTask uploadTask = reference.putFile(image);
-
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-
-    // Waits till the file is uploaded then stores the download url
-    url = await taskSnapshot.ref.getDownloadURL();
-
-    print(url);
-
-    setState(() {
       _imageUrl = url;
-    });
-
-
-  }
-
-
-
-  addtoDatabase() async {
-
-    await FirebaseFirestore.instance.collection('stores').doc(widget.id).collection('products').doc(uuid.v1())
-        .set({
-      'category':cat_val,
-      'name':name,
-      'selling_price':Sellingprice,
-      'imageUrl':imageUrl,
-      'details':details,
-      'instock':instock.toLowerCase(),
-      'addedby': 'user',
-    }).then((value) {
-      Toast.show("Your Product details has been saved!!!", context,duration: Toast.LENGTH_SHORT,gravity: Toast.BOTTOM);
-      print("success");
+      await FirebaseFirestore.instance.collection('stores').doc(widget.id).collection('products').doc(uuid.v1())
+          .set({
+        'category':cat_val,
+        'name':name,
+        'selling_price':Sellingprice,
+        'imageUrl':_imageUrl,
+        'details':details,
+        'instock':instock.toLowerCase(),
+        'addedby': 'user',
+      }).then((value) {
+        Toast.show("Your Product details has been saved!!!", context,duration: Toast.LENGTH_SHORT,gravity: Toast.BOTTOM);
+        print("success");
+      });
     });
   }
 
   updatabase() async{
-    FirebaseFirestore.instance.collection('stores').doc(widget.id).collection('products')
-        .doc(widget.documentid)
-        .update({
-      'category':cat_val,
-      'name':name,
-      'selling_price':Sellingprice,
-      'imageUrl':imageUrl,
-      'details':details,
-      'instock':instock.toLowerCase(),
-        }).then((value) {
-          Toast.show("Your Product details has been updated!!!", context,duration: Toast.LENGTH_SHORT,gravity: Toast.BOTTOM);
-       print("success");
+    String uniqueId = uuid.v1();
+    String url;
+    FirebaseStorage storage = FirebaseStorage.instance;
+    setState(() async{
+      StorageReference reference =
+      storage.ref().child("profileImages/${uniqueId}");
+
+      //Upload the file to firebase
+      StorageUploadTask uploadTask = reference.putFile(image);
+
+      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+
+      // Waits till the file is uploaded then stores the download url
+      url = await taskSnapshot.ref.getDownloadURL();
+
+      print(url);
+      _imageUrl = url;
+      await FirebaseFirestore.instance.collection('stores').doc(widget.id).collection('products')
+          .doc(widget.documentid)
+          .update({
+        'category':cat_val,
+        'name':name,
+        'selling_price':Sellingprice,
+        'imageUrl':_imageUrl,
+        'details':details,
+        'instock':instock.toLowerCase(),
+          }).then((value) {
+            Toast.show("Your Product details has been updated!!!", context,duration: Toast.LENGTH_SHORT,gravity: Toast.BOTTOM);
+        print("success");
+      });
     });
   }
 }

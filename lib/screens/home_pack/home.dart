@@ -20,7 +20,7 @@ import 'package:winkl/screens/home_pack/manage_employees/employee_list.dart';
 import 'package:winkl/screens/home_pack/membership.dart';
 import 'package:winkl/screens/home_pack/profile_page.dart';
 import 'package:winkl/screens/intro/intro.dart';
-import 'file:///C:/Users/LENOVO/Desktop/StackNation_%20Internship/winkl/lib/screens/home_pack/manage_inventory/productsList.dart';
+import 'package:winkl/screens/home_pack/productsList.dart';
 import 'accept_orders_pac/accept_orders.dart';
 import 'manage_orders_pac/manage_orders_home.dart';
 

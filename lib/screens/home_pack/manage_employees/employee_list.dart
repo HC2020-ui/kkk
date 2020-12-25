@@ -116,14 +116,30 @@ class _EmployeeListState extends State<EmployeeList> {
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     children: [
-                                      Text(capitalize(data.get('name').toString())??"Loading...",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25,color: Colors.grey)),
-                                      Text(capitalize(data.get('role'))??"Loading...",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.redAccent,fontSize: 18)),
-                                      SizedBox(width: 20,),
-                                      Text(data.get('phone')??"Loading...",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.grey.shade500,fontSize: 15))
+                                      Container(
+                                        child: Image(
+                                          image: NetworkImage('https://www.grocapitus.com/wp-content/uploads/placeholder-profile-male-500x500.png'),
+                                          height: 100,
+                                          width: 100,
+                                          fit: BoxFit.contain,
+                                        ),
+                                        padding: EdgeInsets.all(10),
+                                      ),
+                                      Column(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          Text(capitalize(data.get('name').toString())??"Loading...",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25,color: Colors.grey)),
+                                          Text(capitalize(data.get('role'))??"Loading...",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.redAccent,fontSize: 18)),
+                                          SizedBox(width: 20,),
+                                          Text(data.get('phone')??"Loading...",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.grey.shade500,fontSize: 15))
+                                        ],
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                      )
                                     ],
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                  )
-                                ],
+                                  ),
+                                  elevation: 5.0,
+                                  color: Colors.white,
+                                ),
                               ),
                               elevation: 5.0,
                               color: Colors.grey.shade100,
